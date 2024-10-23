@@ -1,5 +1,44 @@
 [
     {
+        "name": "TerraRaise",
+        "author": "Vincentcf",
+        "category": "earth / earth bend / earth bending / earthbending / raiseearth / raiseearth but better / terraraise",
+        "last_update": "Sep 18, 2024",
+        "latest_version": "1.0.0",
+        "download_url": "https://projectkorra.com/forum/resources/terraraise.86095/download",
+        "source_url": "https://projectkorra.com/forum/resources/terraraise.86095",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "",
+        "max_pk_version": ""
+    },
+    {
+        "name": "FlameLunge",
+        "author": "Lord_Cacetus_",
+        "category": "firebending / firebending ability",
+        "last_update": "Sep 20, 2024",
+        "latest_version": "1.0.1",
+        "download_url": "https://projectkorra.com/forum/resources/flamelunge.496/download",
+        "source_url": "https://projectkorra.com/forum/resources/flamelunge.496",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "",
+        "max_pk_version": ""
+    },
+    {
+        "name": "SonicSlash",
+        "author": "ShadowTP",
+        "category": "air / soundbending",
+        "last_update": "Oct 10, 2024",
+        "latest_version": "1.0",
+        "download_url": "https://projectkorra.com/forum/resources/sonicslash.497/download",
+        "source_url": "https://projectkorra.com/forum/resources/sonicslash.497",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "",
+        "max_pk_version": ""
+    },
+    {
         "name": "TerraSense (Redone!)",
         "author": "Hiro3",
         "category": "blind / earth / earthbending / glow / hiro3 / passive / seismicsense / toph",
