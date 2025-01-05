@@ -75,10 +75,6 @@
             <th>Last Update</th>
             <th>Latest Version</th>
             <th>Download</th>
-            <th>Min MC</th>
-            <th>Max MC</th>
-            <th>Min PK</th>
-            <th>Max PK</th>
           </tr>
         </thead>
 
@@ -186,10 +182,6 @@
               <td>${normalizedDate || '<i class="fas fa-question-circle"></i>'}</td>
               <td>${entry.latest_version || '<i class="fas fa-question-circle"></i>'}</td>
               <td>${sourceLink}</td>
-              <td>${entry.min_mc_version || '<i class="fas fa-question-circle"></i>'}</td>
-              <td>${entry.max_mc_version || '<i class="fas fa-question-circle"></i>'}</td>
-              <td>${entry.min_pk_version || '<i class="fas fa-question-circle"></i>'}</td>
-              <td>${entry.max_pk_version || '<i class="fas fa-question-circle"></i>'}</td>
             `;
 
             tableBody.appendChild(row);
