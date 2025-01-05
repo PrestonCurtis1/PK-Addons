@@ -75,7 +75,6 @@
             <th>Last Update</th>
             <th>Latest Version</th>
             <th>Download</th>
-            <th>Source</th>
             <th>Min MC</th>
             <th>Max MC</th>
             <th>Min PK</th>
@@ -171,11 +170,6 @@
 
         data.forEach(entry => {
             const normalizedDate = normalizeDate(entry.last_update);
-            const downloadLink = entry.download_url 
-                ? (entry.download_url !== "DEAD LINK" 
-                ? `<a href="${entry.download_url}" target="_blank"><i class="fa-solid fa-download"></i></a>` 
-                : '<i class="fa-solid fa-x"></i>') 
-            : '<i class="fas fa-question-circle"></i>'; 
 
             const sourceLink = entry.source_url 
                 ? (entry.source_url !== "DEAD LINK" 
@@ -191,7 +185,6 @@
               <td>${entry.category || '<i class="fas fa-question-circle"></i>'}</td>
               <td>${normalizedDate || '<i class="fas fa-question-circle"></i>'}</td>
               <td>${entry.latest_version || '<i class="fas fa-question-circle"></i>'}</td>
-              <td>${downloadLink}</td>
               <td>${sourceLink}</td>
               <td>${entry.min_mc_version || '<i class="fas fa-question-circle"></i>'}</td>
               <td>${entry.max_mc_version || '<i class="fas fa-question-circle"></i>'}</td>
