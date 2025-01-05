@@ -182,5 +182,21 @@
         "bedrock_port": "19132",
         "discord_invite": "https://discord.gg/vah8jBDh",
         "languages": "per, en"
+    },
+    {
+        "name": "KorraMC",     
+        "ip": "playastralmc.com",
+        "tags": "Survival / Arena",
+        "bedrock_port": "15.235.110.30:26921",
+        "discord_invite": "https://discord.gg/9sdfeFfr",
+        "languages": "en"
+    },
+    {
+        "name": "Bending Masters",     
+        "ip": "bendingmasters.apexmc.co",
+        "tags": "Arena",
+        "bedrock_port": "",
+        "discord_invite": "https://discordapp.com/invite/vVBmudt",
+        "languages": "en"
     } 
 ]
