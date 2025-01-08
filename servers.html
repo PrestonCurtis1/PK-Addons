@@ -63,6 +63,7 @@
   
   <div class="container my-4">
     <h1 class="text-center mb-4">ProjectKorra Servers</h1>
+    <p class="text-center mb-4">Total people playing right now: <span id="total-players">0</span></p>
 
     <div class="table-responsive">
       <table id="servers-table" class="table table-dark table-striped table-bordered text-white">
@@ -154,6 +155,13 @@ document.addEventListener("DOMContentLoaded", function () {
     table.cell(rowIndex, 5).data(serverData.onlinePlayers).draw();
     table.cell(rowIndex, 6).data(serverData.maxPlayers).draw();
     table.cell(rowIndex, 7).data(serverData.version).draw();
+
+    const totalPlayersElement = document.getElementById('total-players');
+    const allPlayerCells = table.column(5).data();
+    const total = Array.from(allPlayerCells)
+      .filter(cell => !cell.includes('fa-spinner') && !cell.includes('fa-times'))
+      .reduce((sum, cell) => sum + parseInt(cell) || 0, 0);
+    totalPlayersElement.textContent = total;
   }
 
   fetch(serversUrl)
