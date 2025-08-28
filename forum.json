@@ -627,13 +627,13 @@
         "name": "FieryRage",
         "author": "Manu",
         "category": "addon / firebending / passive",
-        "last_update": "Jul 19, 2021",
-        "latest_version": "1.0.0",
+        "last_update": "May 3, 2025",
+        "latest_version": "1.0.1",
         "download_url": "https://projectkorra.com/forum/resources/fieryrage.438/download",
         "source_url": "https://projectkorra.com/forum/resources/fieryrage.438",
         "min_mc_version": "",
         "max_mc_version": "",
-        "min_pk_version": "",
+        "min_pk_version": "1.11.2",
         "max_pk_version": ""
     },
     {
@@ -1248,16 +1248,16 @@
         "max_pk_version": ""
     },
     {
-        "name": "FireSerpent (1.8.7)",
+        "name": "FireSerpent (1.12.0)",
         "author": "EmeraldJelly",
         "category": "dragons / emeraldjelly / fiayah!!! / fire",
-        "last_update": "Jul 27, 2019",
-        "latest_version": "v1.0.0",
+        "last_update": "Jun 7, 2025",
+        "latest_version": "1.12.0",
         "download_url": "https://projectkorra.com/forum/resources/fireserpent-1-8-7.281/download",
         "source_url": "https://projectkorra.com/forum/resources/fireserpent-1-8-7.281",
         "min_mc_version": "",
         "max_mc_version": "",
-        "min_pk_version": "",
+        "min_pk_version": "1.12.0",
         "max_pk_version": ""
     },
     {
@@ -2980,13 +2980,13 @@
         "name": "Windsweep",
         "author": "Nysseus",
         "category": "airbending / airblast replacement / mobility",
-        "last_update": "Nov 10, 2024",
-        "latest_version": "1.1.0",
+        "last_update": "May 21, 2025",
+        "latest_version": "1.2.0",
         "download_url": "https://projectkorra.com/forum/resources/windsweep.499/download",
         "source_url": "https://projectkorra.com/forum/resources/windsweep.499",
         "min_mc_version": "",
         "max_mc_version": "",
-        "min_pk_version": "",
+        "min_pk_version": "1.11.2",
         "max_pk_version": ""
     },
     {
@@ -3000,6 +3000,84 @@
         "min_mc_version": "",
         "max_mc_version": "",
         "min_pk_version": "",
+        "max_pk_version": ""
+    },-------------------------------------------
+    {
+        "name": "Cauterize",
+        "author": "Conwagen",
+        "category": "firebending",
+        "last_update": "Apr 5, 2025",
+        "latest_version": "1.0",
+        "download_url": "https://projectkorra.com/forum/resources/cauterize.502/download",
+        "source_url": "https://projectkorra.com/forum/resources/cauterize.502",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "1.11.2",
+        "max_pk_version": ""
+    },
+    {
+        "name": "MetalDetector",
+        "author": "Unprankable",
+        "category": "metalbending",
+        "last_update": "Apr 10, 2025",
+        "latest_version": "1.2",
+        "download_url": "https://projectkorra.com/forum/resources/metaldetector-1-2.505/download",
+        "source_url": "https://projectkorra.com/forum/metaldetector-1-2.505",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "1.11.2",
+        "max_pk_version": ""
+    },
+    {
+        "name": "Soar",
+        "author": "Nysseus",
+        "category": "airbending",
+        "last_update": "Apr 25, 2025",
+        "latest_version": "1.0.0",
+        "download_url": "https://projectkorra.com/forum/resources/soar.507/download",
+        "source_url": "https://projectkorra.com/forum/soar.507",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "1.11.2",
+        "max_pk_version": ""
+    },
+    {
+        "name": "FireDragon",
+        "author": "ProgrammerPadfoot",
+        "category": "firebending",
+        "last_update": "May 27, 2025",
+        "latest_version": "1.3",
+        "download_url": "https://projectkorra.com/forum/resources/firedragon.509/download",
+        "source_url": "https://projectkorra.com/forum/firedragon.509",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "1.11.2",
+        "max_pk_version": ""
+    },
+    {
+        "name": "Whip",
+        "author": "HiHelloy",
+        "category": "waterbending",
+        "last_update": "Jul 1, 2025",
+        "latest_version": "2.0",
+        "download_url": "https://projectkorra.com/forum/resources/whip.511/download",
+        "source_url": "https://projectkorra.com/forum/whip.511",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "1.11.2",
+        "max_pk_version": ""
+    },
+    {
+        "name": "EarthDisc",
+        "author": "HiHelloy",
+        "category": "earthbending",
+        "last_update": "Jul 6, 2025",
+        "latest_version": "1.12.0",
+        "download_url": "https://projectkorra.com/forum/resources/earthdisc.513/download",
+        "source_url": "https://projectkorra.com/forum/earthdisc.513",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "1.12.0",
         "max_pk_version": ""
     }
 ]
