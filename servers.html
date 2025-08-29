@@ -1,73 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ProjectKorra Servers</title>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/vapor/bootstrap.min.css">
-
-  <style>
-    canvas.sparkline { width: 120px !important; height: 40px !important; }
-    #total-sparkline { width: 300px; height: 50px; }
-    select { color:#fff; background:#2c2c2c; border:1px solid #6c757d; padding:5px; }
-    select option { color:#000; background:#fff; }
-  </style>
-</head>
-
-<body class="bg-dark text-white">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">PK-Addons</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="index.html">Addons</a></li>
-          <li class="nav-item"><a class="nav-link active" aria-current="page" href="servers.html">Servers</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container my-4">
-    <h1 class="text-center mb-4">ProjectKorra Servers</h1>
-    <p class="text-center">Total players (last 15m): <span id="total-players">0</span></p>
-    <div class="text-center mb-4"><canvas id="total-sparkline"></canvas></div>
-
-    <div class="table-responsive">
-      <table id="servers-table" class="table table-dark table-striped table-bordered text-white">
-        <thead class="bg-secondary">
-          <tr>
-            <th>Name</th><th>IP</th><th>Discord</th><th>Bedrock Port</th>
-            <th>MOTD</th><th>Online Players</th><th>Max Players</th><th>Supported Version(s)</th><th>Last 24h</th>
-          </tr>
-        </thead>
-        <tbody id="servers-table-body"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="text-center">
-    <p>
-      This site is not owned or operated by ProjectKorra.<br>
-      If you would like to add, remove, or update a server, feel free to open a PR or issue on
-      <a href="https://github.com/CozmycDev/PK-Addons">the repo</a>.<br>
-      Legend: <i class="fas fa-question-circle"></i>=Unknown, <i class="fa-solid fa-x"></i>=Offline/Not Applicable<br>
-      Last Updated: Aug 29, 2025
-    </p>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-
 <script>
 document.addEventListener("DOMContentLoaded", async function() {
   const serversUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/servers.json";
@@ -86,21 +16,14 @@ document.addEventListener("DOMContentLoaded", async function() {
   const cutoff = now - 24 * 60 * 60 * 1000; // 24h cutoff
   const intervalMs = 15 * 60 * 1000; // 15 minutes
 
-  function padSeries(series) {
-    const seriesMap = new Map(series.map(d => [Math.floor(d.time/intervalMs)*intervalMs, d.players]));
-    const padded = [];
-    for(let t = cutoff; t <= now; t += intervalMs) {
-      padded.push({ time: t, players: seriesMap.get(t) ?? 0 });
-    }
-    return padded;
-  }
-
   let totalPlayers = 0;
+
+  // Prepare totalSeriesMap for total sparkline
   const totalSeriesMap = new Map();
 
-  servers.forEach((server,index)=>{
+  servers.forEach(server => {
     const latestData = latest[server.name] || {};
-    totalPlayers = latestData.players ?? 0;
+    totalPlayers += latestData.players ?? 0;
 
     const discordLink = server.discord_invite
       ? `<a href="${server.discord_invite}" target="_blank">Join <i class="fa-brands fa-discord"></i></a>`
@@ -125,9 +48,21 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     const canvas = row.querySelector('canvas.sparkline');
     if(canvas){
-      const series = padSeries(history[server.name] || []);
-      series.forEach(d => totalSeriesMap.set(d.time, (totalSeriesMap.get(d.time) || 0) + d.players));
-      const max24 = Math.max(...series.map(d => d.players));
+      // Build a per-server Map keyed by rounded timestamp
+      const seriesMap = new Map();
+      (history[server.name] || []).forEach(d => {
+        const t = Math.floor(d.time/intervalMs)*intervalMs;
+        seriesMap.set(t, d.players);
+        totalSeriesMap.set(t, (totalSeriesMap.get(t) || 0) + d.players);
+      });
+
+      // Pad series for missing intervals
+      const paddedSeries = [];
+      for(let t = cutoff; t <= now; t += intervalMs){
+        paddedSeries.push({ time: t, players: seriesMap.get(t) ?? 0 });
+      }
+
+      const max24 = Math.max(...paddedSeries.map(d => d.players));
 
       new Chart(canvas.getContext("2d"), {
         type:"line",
@@ -135,19 +70,19 @@ document.addEventListener("DOMContentLoaded", async function() {
           datasets:[
             {
               label:"Online",
-              data:series.map(d=>({x:new Date(d.time),y:d.players})),
+              data:paddedSeries.map(d=>({x:new Date(d.time),y:d.players})),
               borderColor:'#4bc0c0', backgroundColor:'rgba(75,192,192,0.1)',
               pointRadius:0, pointHitRadius:10, tension:0.3, borderWidth:1, fill:true
             },
             {
               label:"Max players",
-              data:series.map(d=>({x:new Date(d.time),y:latestData.max || 0})),
+              data:paddedSeries.map(d=>({x:new Date(d.time),y:latestData.max || 0})),
               borderColor:'#f54242', borderWidth:1, pointRadius:0,
               borderDash:[4,2], fill:false
             },
             {
               label:"Prev 24h max",
-              data:series.map(d=>({x:new Date(d.time),y:max24})),
+              data:paddedSeries.map(d=>({x:new Date(d.time),y:max24})),
               borderColor:'#f5a142', borderWidth:1, pointRadius:0,
               borderDash:[2,2], fill:false
             }
@@ -171,20 +106,12 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   document.getElementById('total-players').textContent = totalPlayers;
 
-  // Total players sparkline - robust to misaligned timestamps
+  // Total players sparkline
   const totalCanvas = document.getElementById("total-sparkline");
   if(totalCanvas){
-    const totalSeriesMap = new Map();
-    Object.values(history).forEach(series=>{
-      series.forEach(d=>{
-        const t = Math.floor(d.time/intervalMs)*intervalMs;
-        totalSeriesMap.set(t, (totalSeriesMap.get(t)||0) + d.players);
-      });
-    });
-
     const paddedTotal = [];
-    for(let t=cutoff; t<=now; t+=intervalMs){
-      paddedTotal.push({ time:t, players: totalSeriesMap.get(t) || 0 });
+    for(let t = cutoff; t <= now; t += intervalMs){
+      paddedTotal.push({ time: t, players: totalSeriesMap.get(t) ?? 0 });
     }
 
     new Chart(totalCanvas.getContext("2d"), {
@@ -210,6 +137,3 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 });
 </script>
-
-</body>
-</html>
