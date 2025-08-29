@@ -52,8 +52,8 @@ select.theme-select option { color:#000; background:#fff; }
     <a class="navbar-brand" href="index.html">PK-Addons</a>
     <div class="d-flex" id="navbarNav">
       <ul class="navbar-nav me-auto d-flex flex-row">
-        <li class="nav-item"><a class="nav-link active" href="index.html">Addons</a><span class="badge bg-danger ms-1 small-badge">NEW!</span>&nbsp;&nbsp;</li>
-        <li class="nav-item"><a class="nav-link" aria-current="page" href="servers.html">Servers</a><span class="badge bg-danger ms-1 small-badge">NEW!</span>&nbsp;&nbsp;</li>
+        <li class="nav-item"><a class="nav-link active" href="index.html">Addons</a><span class="badge bg-danger ms-1 small-badge">NEW!</span>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+        <li class="nav-item"><a class="nav-link" aria-current="page" href="servers.html">Servers</a><span class="badge bg-danger ms-1 small-badge">NEW!</span>&nbsp;&nbsp;&nbsp;&nbsp;</li>
       </ul>
 
       <ul class="navbar-nav ms-auto d-flex flex-row align-items-center">
@@ -168,6 +168,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   fetchAndMergeData().then(data=>{
     const tableBody = document.getElementById("table-body");
+    const newCutoff = moment("2025-01-04", "YYYY-MM-DD"); // anything after this is new
+
     data.forEach(entry=>{
       const normalizedDate = normalizeDate(entry.last_update);
       const sourceLink = entry.source_url
@@ -178,9 +180,16 @@ document.addEventListener('DOMContentLoaded', function() {
             : '<i class="fa-solid fa-x"></i>')
         : '<i class="fas fa-question-circle"></i>';
 
+      // Check if this entry is new
+      const isNew = normalizedDate && moment(normalizedDate).isAfter(newCutoff);
+      const nameCell = entry.name || '<i class="fas fa-question-circle"></i>';
+      const nameWithBadge = isNew
+        ? `${nameCell} <span class="badge bg-danger ms-1 small-badge">NEW!</span>`
+        : nameCell;
+
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${entry.name||'<i class="fas fa-question-circle"></i>'}</td>
+        <td>${nameWithBadge}</td>
         <td>${entry.author||'<i class="fas fa-question-circle"></i>'}</td>
         <td>${entry.category||'<i class="fas fa-question-circle"></i>'}</td>
         <td>${normalizedDate||'<i class="fas fa-question-circle"></i>'}</td>
@@ -192,7 +201,6 @@ document.addEventListener('DOMContentLoaded', function() {
     $.fn.dataTable.moment('YYYY-MM-DD');
     $('#table').DataTable({ "order": [[3,'desc']], "columnDefs":[{"targets":3,"type":"date"}] });
   });
-
 });
 </script>
 
