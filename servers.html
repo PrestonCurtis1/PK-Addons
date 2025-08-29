@@ -76,19 +76,26 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   const table = $('#servers-table').DataTable({ columnDefs:[{ targets:'_all', orderable:false }] });
 
-  const [servers, latest, history] = await Promise.all([
+  const [servers, latest, historyRaw] = await Promise.all([
     fetch(serversUrl).then(r => r.json()),
     fetch(latestUrl).then(r => r.json()),
     fetch(historyUrl + "?t=" + Date.now()).then(r => r.json())
   ]);
 
+  // Convert all timestamps in history to numbers
+  const history = {};
+  Object.entries(historyRaw).forEach(([server, series]) => {
+    history[server] = series.map(d => ({
+      time: Number(d.time),
+      players: Number(d.players)
+    }));
+  });
+
   const now = Date.now();
-  const cutoff = now - 24 * 60 * 60 * 1000; // 24h cutoff
-  const intervalMs = 15 * 60 * 1000; // 15 minutes
+  const cutoff = now - 24 * 60 * 60 * 1000; // last 24h
+  const intervalMs = 15 * 60 * 1000;
 
   let totalPlayers = 0;
-
-  // Prepare totalSeriesMap for total sparkline
   const totalSeriesMap = new Map();
 
   servers.forEach(server => {
@@ -118,15 +125,14 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     const canvas = row.querySelector('canvas.sparkline');
     if(canvas){
-      // Build a per-server Map keyed by rounded timestamp
       const seriesMap = new Map();
+
       (history[server.name] || []).forEach(d => {
         const t = Math.floor(d.time/intervalMs)*intervalMs;
         seriesMap.set(t, d.players);
         totalSeriesMap.set(t, (totalSeriesMap.get(t) || 0) + d.players);
       });
 
-      // Pad series for missing intervals
       const paddedSeries = [];
       for(let t = cutoff; t <= now; t += intervalMs){
         paddedSeries.push({ time: t, players: seriesMap.get(t) ?? 0 });
@@ -161,14 +167,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         options:{
           responsive:false,
           interaction: { mode:'nearest', intersect:false },
-          plugins:{
-            legend:{ display:false },
-            tooltip:{ mode:'nearest', intersect:false }
-          },
-          scales:{
-            y:{ min:0, max: Math.max(latestData.max || 0, max24), display:false },
-            x:{ display:false }
-          }
+          plugins:{ legend:{ display:false }, tooltip:{ mode:'nearest', intersect:false } },
+          scales:{ y:{ min:0, max: Math.max(latestData.max || 0, max24), display:false }, x:{ display:false } }
         }
       });
     }
@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   document.getElementById('total-players').textContent = totalPlayers;
 
-  // Total players sparkline
+  // Total sparkline
   const totalCanvas = document.getElementById("total-sparkline");
   if(totalCanvas){
     const paddedTotal = [];
