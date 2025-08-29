@@ -28,9 +28,11 @@
   select.theme-select { color:#fff; background:#2c2c2c; border:1px solid #6c757d; padding:5px; margin-right:10px; }
   select.theme-select option { color:#000; background:#fff; }
   #servers-table { width:100% !important; }
-  @media (max-width: 576px) {
-    #theme-selector { width: 100%; margin-bottom: 8px; }
-    #dark-toggle { width: 100%; }
+  @media (max-width: 992px) { /* Bootstrap lg breakpoint */
+    .navbar-collapse .dropdown-menu {
+      position: static !important;
+      float: none;
+    }
   }
 </style>
 </head>
@@ -45,12 +47,7 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
-  <ul class="navbar-nav me-auto">
-    <li class="nav-item"><a class="nav-link" href="index.html">Addons</a></li>
-    <li class="nav-item"><a class="nav-link active" aria-current="page" href="servers.html">Servers</a></li>
-  </ul>
-
-  <ul class="navbar-nav ms-auto">
+<ul class="navbar-nav ms-auto">
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="#" id="themeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
       Theme
@@ -58,7 +55,7 @@
     <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="themeDropdown">
       <li>
         <select id="theme-selector" class="form-select mb-2">
-          <!-- options filled by JS -->
+          <!-- JS fills options -->
         </select>
       </li>
       <li class="text-center">
@@ -104,6 +101,15 @@
 <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+  dropdownElementList.map(function(dropdownToggleEl) {
+    return new bootstrap.Dropdown(dropdownToggleEl, { autoClose: true })
+  })
+});
+</script>
 
 <script>
 const themes = [
