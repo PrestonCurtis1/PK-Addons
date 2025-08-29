@@ -36,9 +36,11 @@ select.theme-select {
 }
 select.theme-select option { color:#000; background:#fff; }
 #table { width:100% !important; }
-@media (max-width: 576px) {
-  #theme-selector { width: 100%; margin-bottom: 8px; }
-  #dark-toggle { width: 100%; }
+@media (max-width: 992px) { /* Bootstrap lg breakpoint */
+  .navbar-collapse .dropdown-menu {
+    position: static !important;
+    float: none;
+  }
 }
 </style>
 </head>
@@ -54,8 +56,8 @@ select.theme-select option { color:#000; background:#fff; }
 
     <div class="collapse navbar-collapse" id="navbarNav">
   <ul class="navbar-nav me-auto">
-    <li class="nav-item"><a class="nav-link" href="index.html">Addons</a></li>
-    <li class="nav-item"><a class="nav-link active" aria-current="page" href="servers.html">Servers</a></li>
+    <li class="nav-item"><a class="nav-link active" href="index.html">Addons</a></li>
+    <li class="nav-item"><a class="nav-link" aria-current="page" href="servers.html">Servers</a></li>
   </ul>
 
   <ul class="navbar-nav ms-auto">
@@ -66,7 +68,7 @@ select.theme-select option { color:#000; background:#fff; }
     <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="themeDropdown">
       <li>
         <select id="theme-selector" class="form-select mb-2">
-          <!-- options filled by JS -->
+          <!-- JS fills options -->
         </select>
       </li>
       <li class="text-center">
@@ -113,6 +115,15 @@ select.theme-select option { color:#000; background:#fff; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/plug-ins/1.13.3/sorting/datetime-moment.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+  dropdownElementList.map(function(dropdownToggleEl) {
+    return new bootstrap.Dropdown(dropdownToggleEl, { autoClose: true })
+  })
+});
+</script>
 
 <script>
 const themes = [
