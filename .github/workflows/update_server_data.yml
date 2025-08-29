@@ -25,8 +25,9 @@ jobs:
           import json, requests, time, os
 
           servers = json.load(open("servers.json"))
+
           interval_ms = 15 * 60 * 1000  # 15 minutes in ms
-          now = int(time.time() * 1000)  # current time in ms
+          now = int(time.time() * 1000)
           snap_time = now - (now % interval_ms)  # round down to nearest 15-min
 
           latest = {}
@@ -45,7 +46,7 @@ jobs:
                           "time": snap_time,
                           "online": True,
                           "players": players_online,
-                          "max": data.get("players", {}).get("max", None),
+                          "max": data.get("players", {}).get("max"),
                           "version": data.get("version"),
                           "motd": " ".join(data.get("motd", {}).get("clean", [])) if "motd" in data else None
                       }
@@ -62,8 +63,11 @@ jobs:
                       "players": 0
                   }
 
-          # total snapshot
-          latest["_total"] = {"time": snap_time, "players": total_players}
+          # add total players snapshot
+          latest["_total"] = {
+              "time": snap_time,
+              "players": total_players
+          }
 
           os.makedirs("data", exist_ok=True)
 
@@ -71,25 +75,23 @@ jobs:
           with open("data/server_latest.json", "w") as f:
               json.dump(latest, f, indent=2)
 
-          # load old history
+          # load old history if exists
           history_path = "data/server_history.json"
           history = {}
           if os.path.exists(history_path):
               with open(history_path) as f:
                   history = json.load(f)
 
-          cutoff = snap_time - 24*60*60*1000  # last 24h
+          cutoff = snap_time - 24 * 60 * 60 * 1000  # keep last 24h
 
           # update history
           for name, snap in latest.items():
-              entry = {"time": snap["time"], "players": snap["players"]}
+              entry = {"time": snap_time, "players": snap["players"]}
               series = history.get(name, [])
               series.append(entry)
-              # keep last 24h
               series = [d for d in series if int(d["time"]) >= cutoff]
               history[name] = series
 
-          # save history
           with open(history_path, "w") as f:
               json.dump(history, f, indent=2)
 
