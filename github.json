@@ -431,7 +431,7 @@
     {
         "name": "ArclightInteractionFix",
         "author": "Cozmyc",
-        "category": "Side Plugin \ Bug Fix \ Arclight \ West",
+        "category": "Side Plugin / Bug Fix / Arclight / West",
         "last_update": "Mar 12, 2025",
         "latest_version": "1.0.0",
         "download_url": "https://github.com/CozmycDev/ArclightInteractionFix/releases",
@@ -444,7 +444,7 @@
     {
         "name": "MetalDetector",
         "author": "Unprankable",
-        "category": "Earthbending \ Metalbending",
+        "category": "Earthbending / Metalbending",
         "last_update": "Apr 10, 2025",
         "latest_version": "1.2",
         "download_url": "https://github.com/PrestonCurtis1/MetalDetector/tree/main/target",
@@ -457,7 +457,7 @@
     {
         "name": "JadePack",
         "author": "ArifKalender",
-        "category": "Side Plugin \ Earthbending \ Ability Pack",
+        "category": "Side Plugin / Earthbending / Ability Pack",
         "last_update": "Apr 11, 2025",
         "latest_version": "0.1b",
         "download_url": "https://github.com/ArifKalender/JadePack/releases",
@@ -470,7 +470,7 @@
     {
         "name": "VoidAbilities",
         "author": "Izan-Sola",
-        "category": "Side Plugin \ Extra Elements \ Ability Pack",
+        "category": "Side Plugin / Extra Elements / Ability Pack",
         "last_update": "Jan 19, 2025",
         "latest_version": "1.21.4",
         "download_url": "https://github.com/Izan-Sola/Void-Abilities-for-Projectkorra/releases",
@@ -496,7 +496,7 @@
     {
         "name": "CollisionUtility",
         "author": "KWilson272",
-        "category": "Side Plugin \ Collisions",
+        "category": "Side Plugin / Collisions",
         "last_update": "May 29, 2025",
         "latest_version": "1.1.1",
         "download_url": "https://github.com/KWilson272/CollisionUtility/releases",
@@ -509,7 +509,7 @@
     {
         "name": "ProjectKorraScrolls",
         "author": "Cozmyc",
-        "category": "Side Plugin \ Scrolls \ Levelling",
+        "category": "Side Plugin / Scrolls / Levelling",
         "last_update": "Jun 4, 2025",
         "latest_version": "snapshot-2",
         "download_url": "https://github.com/CozmycDev/ProjectKorraScrolls/releases",
@@ -522,7 +522,7 @@
     {
         "name": "Cloudy",
         "author": "Lord-Cacetus",
-        "category": "Side Plugin \ Steambending \ Ability Pack",
+        "category": "Side Plugin / Steambending / Ability Pack",
         "last_update": "Jun 10, 2025",
         "latest_version": "1.3.0-b4",
         "download_url": "https://github.com/Lord-Cacetus/Cloudy-Plugin/releases",
@@ -535,7 +535,7 @@
     {
         "name": "HealingColds",
         "author": "PrideInt",
-        "category": "Ability Pack \ Hackathon2025 \ Healing",
+        "category": "Ability Pack / Hackathon2025 / Healing",
         "last_update": "Aug 27, 2025",
         "latest_version": "1.0",
         "download_url": "https://github.com/PridesArchives/HealingColds/releases",
@@ -548,7 +548,7 @@
     {
         "name": "DustDevil",
         "author": "Ryan",
-        "category": "Earthbending \ Sandbending \ Hackathon2025",
+        "category": "Earthbending / Sandbending / Hackathon2025",
         "last_update": "Aug 19, 2025",
         "latest_version": "1.0",
         "download_url": "https://github.com/BendingMc-dev/PK-Hackathon/releases",
@@ -561,7 +561,7 @@
     {
         "name": "Vacuum",
         "author": "Cozmyc",
-        "category": "Airbending \ Hackathon2025",
+        "category": "Airbending / Hackathon2025",
         "last_update": "Aug 22, 2025",
         "latest_version": "1.1.1",
         "download_url": "https://github.com/CozmycDev/PK-Hackathon2025-Vacuum/releases",
@@ -574,7 +574,7 @@
     {
         "name": "AlmostEnoughAbilities",
         "author": "ArifKalender",
-        "category": "Side Plugin \ Ability Pack \ Hackathon2025",
+        "category": "Side Plugin / Ability Pack / Hackathon2025",
         "last_update": "Aug 18, 2025",
         "latest_version": "1.0.1",
         "download_url": "https://github.com/ArifKalender/AlmostEnoughAbilities/releases",
@@ -587,7 +587,7 @@
     {
         "name": "TTTHackathon-Kaketuz",
         "author": "Lord-Cacetus",
-        "category": "Side Plugin \ Ability Pack \ Hackathon2025",
+        "category": "Side Plugin / Ability Pack / Hackathon2025",
         "last_update": "Aug 27, 2025",
         "latest_version": "1.0.3",
         "download_url": "https://github.com/Lord-Cacetus/TTTHackathon-Kaketuz/releases",
@@ -600,7 +600,7 @@
     {
         "name": "AirCurrent",
         "author": "gggrafton",
-        "category": "Airbending \ Hackathon2025",
+        "category": "Airbending / Hackathon2025",
         "last_update": "Aug 20, 2025",
         "latest_version": "1.1.0",
         "download_url": "https://github.com/gggrafton/PKHackathon/releases",
@@ -613,7 +613,7 @@
     {
         "name": "WallDash",
         "author": "Sc1original",
-        "category": "Chiblocking \ Hackathon2025",
+        "category": "Chiblocking / Hackathon2025",
         "last_update": "Aug 17, 2025",
         "latest_version": "1.1.5",
         "download_url": "https://github.com/Sc1original/WallDash/releases",
@@ -626,7 +626,7 @@
     {
         "name": "DashPack",
         "author": "JustAHuman",
-        "category": "Side Plugin \ Ability Pack \ Hackathon2025",
+        "category": "Side Plugin / Ability Pack / Hackathon2025",
         "last_update": "Aug 17, 2025",
         "latest_version": "1.0.0",
         "download_url": "https://github.com/JustAHuman-xD/DashPack/releases",
@@ -639,7 +639,7 @@
     {
         "name": "DripstoneDrive",
         "author": "ReleasedSnow",
-        "category": "Side Plugin \ Earthbending \ Hackathon2025",
+        "category": "Side Plugin / Earthbending / Hackathon2025",
         "last_update": "Aug 17, 2025",
         "latest_version": "1.0",
         "download_url": "https://github.com/ReleasedSnow/DripstoneDrive/releases",
@@ -652,7 +652,7 @@
     {
         "name": "WaterRing",
         "author": "FinnBueno",
-        "category": "Waterbending \ Hackathon2025",
+        "category": "Waterbending / Hackathon2025",
         "last_update": "Aug 6, 2025",
         "latest_version": "0.1.1-b",
         "download_url": "https://github.com/FinnBueno/WaterRing/releases",
