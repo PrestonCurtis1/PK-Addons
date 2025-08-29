@@ -59,7 +59,10 @@
 
   <div class="container my-4">
     <h1 class="text-center mb-4">ProjectKorra Servers</h1>
-    <p class="text-center mb-4">Total people playing right now: <span id="total-players">0</span></p>
+    <p class="text-center">
+      Total players over last 24h:
+      <canvas id="total-sparkline" style="width:300px; height:50px;"></canvas>
+    </p>
 
     <div class="table-responsive">
       <table id="servers-table" class="table table-dark table-striped table-bordered text-white">
@@ -174,6 +177,32 @@
       });
 
       document.getElementById('total-players').textContent = totalPlayers;
+
+      const timestamps = new Set();
+      Object.values(history).forEach(series => {
+        series.forEach(d => { if(d.time >= cutoff) timestamps.add(d.time); });
+      });
+
+      const sortedTimes = Array.from(timestamps).sort((a,b) => a-b);
+      const totalSeries = sortedTimes.map(t => {
+        return {
+          x: new Date(t),
+          y: Object.values(history)
+                .reduce((sum, series) => {
+                  const entry = series.find(d => d.time === t);
+                  return sum + (entry ? entry.players : 0);
+                }, 0)
+        };
+      });
+
+      const totalCanvas = document.getElementById('total-sparkline');
+      if(totalCanvas && totalSeries.length) {
+        new Chart(totalCanvas.getContext("2d"), {
+          type: 'line',
+          data: { datasets: [{ data: totalSeries, borderColor:'#f5c542', pointRadius:0, borderWidth:1, tension:0.3 }] },
+          options: { responsive:false, plugins:{ legend:{display:false} }, scales:{ y:{display:false}, x:{display:false} } }
+        });
+      }
 
       $('#servers-table tbody').on('click', '.copy-ip', function () {
         const ip = $(this).data('ip');
