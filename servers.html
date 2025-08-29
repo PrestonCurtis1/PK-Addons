@@ -82,9 +82,9 @@ document.addEventListener("DOMContentLoaded", async function() {
     fetch(historyUrl + "?t=" + Date.now()).then(r => r.json())
   ]);
 
-  const intervalMs = 15 * 60 * 1000; // 15 minutes
+  const intervalMs = 15 * 60 * 1000;
   const now = Date.now();
-  const roundedNow = now - (now % intervalMs); // snap to nearest 15-min
+  const roundedNow = now - (now % intervalMs);
   const cutoff = roundedNow - 24 * 60 * 60 * 1000;
 
   let totalPlayers = 0;
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     if(canvas){
       const seriesMap = new Map();
       (historyRaw[server.name] || []).forEach(d => {
-        const t = Number(d.time); // already snapped by workflow
+        const t = Number(d.time);
         const p = Number(d.players);
         if (!isNaN(t)) {
           seriesMap.set(t, p);
@@ -132,7 +132,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         paddedSeries.push({ time: t, players: seriesMap.get(t) ?? 0 });
       }
 
-      const max24 = Math.max(...paddedSeries.map(d => d.players), 0);
+      const maxObserved = Math.max(...paddedSeries.map(d => d.players), 0);
+      const scaleMax = Math.max(latestData.max || 0, maxObserved || 1);
 
       new Chart(canvas.getContext("2d"), {
         type:"line",
@@ -155,7 +156,7 @@ document.addEventListener("DOMContentLoaded", async function() {
           plugins:{ legend:{ display:false }, tooltip:{ mode:'nearest', intersect:false } },
           scales:{
             x:{ type:'time', time:{ unit:'hour' }, display:false },
-            y:{ min:0, max: Math.max(latestData.max || 0, max24 || 1), display:false }
+            y:{ min:0, max: scaleMax, display:false }
           }
         }
       });
@@ -170,6 +171,8 @@ document.addEventListener("DOMContentLoaded", async function() {
     for(let t = cutoff; t <= roundedNow; t += intervalMs){
       paddedTotal.push({ time:t, players: totalSeriesMap.get(t) ?? 0 });
     }
+
+    const maxTotalObserved = Math.max(...paddedTotal.map(d => d.players), 0);
 
     new Chart(totalCanvas.getContext("2d"), {
       type:"line",
@@ -190,13 +193,12 @@ document.addEventListener("DOMContentLoaded", async function() {
         plugins:{ legend:{ display:false }, tooltip:{ mode:'nearest', intersect:false } },
         scales:{
           x:{ type:'time', time:{ unit:'hour' }, display:false },
-          y:{ min:0, display:false }
+          y:{ min:0, max: maxTotalObserved || 1, display:false }
         }
       }
     });
   }
 
-  // Copy IP handler
   $('#servers-table tbody').on('click','.copy-ip',function(){
     const ip=$(this).data('ip');
     navigator.clipboard.writeText(ip).then(()=>alert(`IP address ${ip} copied!`)).catch(console.error);
