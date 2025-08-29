@@ -40,7 +40,8 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand" href="index.html">PK-Addons</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -97,85 +98,88 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
   <script>
-document.addEventListener("DOMContentLoaded", async function () {
-  const latestUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_latest.json";
-  const historyUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_history.json";
+    document.addEventListener("DOMContentLoaded", async function () {
+      const serversUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/servers.json";
+      const latestUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_latest.json";
+      const historyUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_history.json";
 
-  const table = $('#servers-table').DataTable({ columnDefs: [{ targets: '_all', orderable: false }] });
+      const table = $('#servers-table').DataTable({ columnDefs: [{ targets: '_all', orderable: false }] });
 
-  const [latest, history] = await Promise.all([
-    fetch(latestUrl).then(r => r.json()),
-    fetch(historyUrl + "?t=" + Date.now()).then(r => r.json())
-  ]);
+      const [servers, latest, history] = await Promise.all([
+        fetch(serversUrl).then(r => r.json()),
+        fetch(latestUrl).then(r => r.json()),
+        fetch(historyUrl + "?t=" + Date.now()).then(r => r.json())
+      ]);
 
-  let totalPlayers = 0;
-  const now = Date.now();
-  const cutoff = now - 24*60*60*1000; // last 24h
+      let totalPlayers = 0;
+      const now = Date.now();
+      const cutoff = now - 24 * 60 * 60 * 1000; // last 24h
 
-  Object.entries(latest).forEach(([name, data], index) => {
-    totalPlayers += data.players || 0;
+      servers.forEach((server, index) => {
+        const latestData = latest[server.name] || {};
 
-    const discordLink = data.discord_invite
-      ? `<a href="${data.discord_invite}" target="_blank">Join <i class="fa-brands fa-discord"></i></a>`
-      : '<i class="fas fa-question-circle"></i>';
+        totalPlayers += latestData.players || 0;
 
-    const bedrockPort = data.bedrock_port
-      ? `<i class="fas fa-check-circle"></i> ${data.bedrock_port}`
-      : '<i class="fas fa-times"></i>';
+        const discordLink = server.discord_invite
+          ? `<a href="${server.discord_invite}" target="_blank">Join <i class="fa-brands fa-discord"></i></a>`
+          : '<i class="fas fa-question-circle"></i>';
 
-    const ipCell = data.ip
-      ? `<span class="copy-ip" data-ip="${data.ip}" style="cursor: pointer;">${data.ip} <i class="fas fa-clipboard"></i></span>`
-      : '<i class="fas fa-question-circle"></i>';
+        const bedrockPort = server.bedrock_port
+          ? `<i class="fas fa-check-circle"></i> ${server.bedrock_port}`
+          : '<i class="fas fa-times"></i>';
 
-    const chartId = `chart-${index}`;
+        const ipCell = server.ip
+          ? `<span class="copy-ip" data-ip="${server.ip}" style="cursor: pointer;">${server.ip} <i class="fas fa-clipboard"></i></span>`
+          : '<i class="fas fa-question-circle"></i>';
 
-    const row = table.row.add([
-      name,
-      ipCell,
-      discordLink,
-      bedrockPort,
-      data.motd || '<i class="fas fa-question-circle"></i>',
-      data.players || 0,
-      data.max || "N/A",
-      data.version || '<i class="fas fa-question-circle"></i>',
-      `<canvas class="sparkline"></canvas>`
-    ]).draw(false).node();
+        const chartId = `chart-${index}`;
 
-    const canvas = row.querySelector('canvas.sparkline');
-    if (canvas) {
-      const series = (history[name] || []).filter(d => d.time >= cutoff);
-      if (series.length) {
-        new Chart(canvas.getContext("2d"), {
-          type: 'line',
-          data: {
-            datasets: [{
-              data: series.map(d => ({ x: new Date(d.time), y: d.players })),
-              borderColor: '#4bc0c0',
-              tension: 0.3,
-              pointRadius: 0,
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { min: 0, max: data.max, display: false } }
+        const row = table.row.add([
+          server.name,
+          ipCell,
+          discordLink,
+          bedrockPort,
+          latestData.motd || '<i class="fas fa-question-circle"></i>',
+          latestData.players || 0,
+          latestData.max || "N/A",
+          latestData.version || '<i class="fas fa-question-circle"></i>',
+          `<canvas class="sparkline"></canvas>`
+        ]).draw(false).node();
+
+        const canvas = row.querySelector('canvas.sparkline');
+        if (canvas) {
+          const series = (history[server.name] || []).filter(d => d.time >= cutoff);
+          if (series.length) {
+            new Chart(canvas.getContext("2d"), {
+              type: 'line',
+              data: {
+                datasets: [{
+                  data: series.map(d => ({ x: new Date(d.time), y: d.players })),
+                  borderColor: '#4bc0c0',
+                  tension: 0.3,
+                  pointRadius: 0,
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { min: 0, max: latestData.max, display: false } }
+              }
+            });
+          } else {
+            canvas.replaceWith(document.createTextNode("⏳"));
           }
-        });
-      } else {
-        canvas.replaceWith(document.createTextNode("⏳"));
-      }
-    }
+        }
+      });
 
-  });
+      document.getElementById('total-players').textContent = totalPlayers;
 
-  document.getElementById('total-players').textContent = totalPlayers;
-
-  $('#servers-table tbody').on('click', '.copy-ip', function () {
-    const ip = $(this).data('ip');
-    navigator.clipboard.writeText(ip).then(() => alert(`IP address ${ip} copied!`)).catch(console.error);
-  });
-});
+      $('#servers-table tbody').on('click', '.copy-ip', function () {
+        const ip = $(this).data('ip');
+        navigator.clipboard.writeText(ip).then(() => alert(`IP address ${ip} copied!`)).catch(console.error);
+      });
+    });
   </script>
 </body>
 </html>
