@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ProjectKorra Servers</title>
 
-<link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/vapor/bootstrap.min.css">
+<link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/yeti/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <style>
   canvas.sparkline { width: 120px !important; height: 40px !important; }
-  #total-sparkline { width: 300px; height: 50px; }
+  #total-sparkline { width: 300px; height: 50px; display:block; margin:0 auto; }
   .theme-select { color:#fff; background:#2c2c2c; border:1px solid #6c757d; padding:5px; margin-right:10px; }
   .theme-select option { color:#000; background:#fff; }
   #servers-table { width:100% !important; }
@@ -42,11 +42,11 @@
 </nav>
 
 <div class="container my-4">
-  <h1 class="text-center mb-4">ProjectKorra Servers</h1>
-  <p class="text-center">Total players (last 15m): <span id="total-players">0</span></p>
-  <div class="text-center mb-4"><canvas id="total-sparkline"></canvas></div>
+  <h1 class="text-center mb-2">ProjectKorra Servers</h1>
+  <p class="text-center mb-2">Total players (last 15m): <span id="total-players">0</span></p>
+  <canvas id="total-sparkline"></canvas>
 
-  <div class="table-responsive">
+  <div class="table-responsive mt-4">
     <table id="servers-table" class="table table-dark table-striped table-bordered text-white">
       <thead class="bg-secondary">
         <tr>
@@ -59,7 +59,7 @@
   </div>
 </div>
 
-<div class="text-center">
+<div class="text-center mt-4 mb-4">
   <p>
     This site is not owned or operated by ProjectKorra.<br>
     If you would like to add, remove, or update a server, feel free to open a PR or issue on
@@ -79,8 +79,11 @@
 const themes = [
   "cerulean","cosmo","cyborg","darkly","flatly","journal","litera","lumen","lux","materia",
   "minty","morph","pulse","quartz","sandstone","simplex","sketchy","slate","solar","spacelab",
-  "superhero","united","vapor","yeti","zephyr"
+  "superhero","united","yeti","vapor","zephyr"
 ];
+
+let table; // global to refresh
+let totalChart; // global for total sparkline
 
 function applyTheme(theme){
   document.getElementById('theme-stylesheet').href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/${theme}/bootstrap.min.css`;
@@ -98,6 +101,14 @@ function applyDarkMode(enabled){
   localStorage.setItem('pk-dark', enabled ? '1' : '0');
 }
 
+function getSparklineColors(){
+  const dark = document.body.classList.contains('bg-dark');
+  return {
+    border: dark ? '#4bc0c0' : '#007bff',
+    background: dark ? 'rgba(75,192,192,0.1)' : 'rgba(0,123,255,0.2)'
+  };
+}
+
 document.addEventListener("DOMContentLoaded", async function() {
   // --- Theme selector ---
   const selector = document.getElementById('theme-selector');
@@ -108,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     selector.appendChild(opt);
   });
 
-  const storedTheme = localStorage.getItem('pk-theme') || 'vapor';
+  const storedTheme = localStorage.getItem('pk-theme') || 'yeti';
   const storedDark = localStorage.getItem('pk-dark') === '1';
   selector.value = storedTheme;
   applyTheme(storedTheme);
@@ -121,6 +132,13 @@ document.addEventListener("DOMContentLoaded", async function() {
     applyDarkMode(enabled);
     document.getElementById('dark-toggle').innerHTML = enabled ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
     table.draw();
+    // update total sparkline colors
+    if(totalChart){
+      const colors = getSparklineColors();
+      totalChart.data.datasets[0].borderColor = colors.border;
+      totalChart.data.datasets[0].backgroundColor = colors.background;
+      totalChart.update();
+    }
   });
 
   // --- Data fetch & table ---
@@ -128,7 +146,7 @@ document.addEventListener("DOMContentLoaded", async function() {
   const latestUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_latest.json";
   const historyUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_history.json";
 
-  const table = $('#servers-table').DataTable({ columnDefs:[{ targets:'_all', orderable:false }] });
+  table = $('#servers-table').DataTable({ columnDefs:[{ targets:'_all', orderable:false }] });
 
   const [servers, latest, historyRaw] = await Promise.all([
     fetch(serversUrl).then(r => r.json()),
@@ -186,9 +204,10 @@ document.addEventListener("DOMContentLoaded", async function() {
         paddedSeries.push({ x: new Date(t), y: seriesMap.get(t) ?? 0 });
       }
 
+      const colors = getSparklineColors();
       new Chart(canvas.getContext("2d"), {
         type: "line",
-        data: { datasets:[{ label:"Online", data:paddedSeries, borderColor:'#4bc0c0', backgroundColor:'rgba(75,192,192,0.1)', pointRadius:1, pointHitRadius:10, tension:0.3, borderWidth:1, fill:true }] },
+        data: { datasets:[{ label:"Online", data:paddedSeries, borderColor: colors.border, backgroundColor: colors.background, pointRadius:1, pointHitRadius:10, tension:0.3, borderWidth:1, fill:true }] },
         options:{
           responsive:false,
           interaction:{ mode:'nearest', intersect:false },
@@ -208,9 +227,10 @@ document.addEventListener("DOMContentLoaded", async function() {
       paddedTotal.push({ x:new Date(t), y: totalSeriesMap.get(t) ?? 0 });
     }
 
-    new Chart(totalCanvas.getContext("2d"), {
+    const colors = getSparklineColors();
+    totalChart = new Chart(totalCanvas.getContext("2d"), {
       type:"line",
-      data:{ datasets:[{ data:paddedTotal, borderColor:'#f5c542', backgroundColor:'rgba(245,197,66,0.2)', pointRadius:1, pointHitRadius:10, tension:0.4, fill:true }] },
+      data:{ datasets:[{ data:paddedTotal, borderColor:colors.border, backgroundColor:colors.background, pointRadius:1, pointHitRadius:10, tension:0.4, fill:true }] },
       options:{
         responsive:false,
         interaction:{ mode:'nearest', intersect:false },
