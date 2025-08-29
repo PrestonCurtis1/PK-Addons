@@ -129,26 +129,18 @@ document.addEventListener("DOMContentLoaded", async function() {
 
       const paddedSeries = [];
       for(let t = cutoff; t <= roundedNow; t += intervalMs){
-        paddedSeries.push({ time: t, players: seriesMap.get(t) ?? 0 });
+        paddedSeries.push({ x: new Date(t), y: seriesMap.get(t) ?? 0 });
       }
 
-      // true normalization: scale Y to [0,1] per server
-      const maxObserved = Math.max(...paddedSeries.map(d => d.players), 1);
-      const normalizedSeries = paddedSeries.map(d => ({
-        x: new Date(d.time),
-        y: d.players / maxObserved,
-        raw: d.players
-      }));
-
       new Chart(canvas.getContext("2d"), {
-        type:"line",
-        data:{
-          datasets:[{
-            label:"Online",
-            data: normalizedSeries,
+        type: "line",
+        data: {
+          datasets: [{
+            label: "Online",
+            data: paddedSeries,
             borderColor:'#4bc0c0',
             backgroundColor:'rgba(75,192,192,0.1)',
-            pointRadius:0,
+            pointRadius:1,
             pointHitRadius:10,
             tension:0.3,
             borderWidth:1,
@@ -160,15 +152,11 @@ document.addEventListener("DOMContentLoaded", async function() {
           interaction:{ mode:'nearest', intersect:false },
           plugins:{
             legend:{ display:false },
-            tooltip:{
-              callbacks:{
-                label: ctx => `${ctx.raw.raw} players online`
-              }
-            }
+            tooltip:{ callbacks:{ label: ctx => `${ctx.parsed.y} players online` } }
           },
           scales:{
             x:{ type:'time', time:{ unit:'hour' }, display:false },
-            y:{ min:0, max:1, display:false }
+            y:{ beginAtZero:true, display:false }
           }
         }
       });
@@ -181,19 +169,17 @@ document.addEventListener("DOMContentLoaded", async function() {
   if(totalCanvas){
     const paddedTotal = [];
     for(let t = cutoff; t <= roundedNow; t += intervalMs){
-      paddedTotal.push({ time:t, players: totalSeriesMap.get(t) ?? 0 });
+      paddedTotal.push({ x:new Date(t), y: totalSeriesMap.get(t) ?? 0 });
     }
-
-    const maxTotalObserved = Math.max(...paddedTotal.map(d => d.players), 1);
 
     new Chart(totalCanvas.getContext("2d"), {
       type:"line",
       data:{
         datasets:[{
-          data: paddedTotal.map(d=>({x:new Date(d.time),y:d.players})),
+          data: paddedTotal,
           borderColor:'#f5c542',
           backgroundColor:'rgba(245,197,66,0.2)',
-          pointRadius:0,
+          pointRadius:1,
           pointHitRadius:10,
           tension:0.4,
           fill:true
@@ -208,7 +194,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         },
         scales:{
           x:{ type:'time', time:{ unit:'hour' }, display:false },
-          y:{ min:0, max:maxTotalObserved, display:false }
+          y:{ beginAtZero:true, display:false }
         }
       }
     });
