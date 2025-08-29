@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Install deps
+      - name: Install dependencies
         run: pip install requests
 
       - name: Update server snapshots
@@ -27,6 +27,7 @@ jobs:
           now = int(time.time() * 1000)  # ms timestamp
 
           latest = {}
+          total_players = 0
           for s in servers:
               name = s["name"]
               ip = s["ip"]
@@ -34,10 +35,12 @@ jobs:
                   r = requests.get(f"https://api.mcsrvstat.us/2/{ip}", timeout=10)
                   data = r.json()
                   if data.get("online"):
+                      players_online = data.get("players", {}).get("online", 0)
+                      total_players += players_online
                       latest[name] = {
                           "time": now,
                           "online": True,
-                          "players": data.get("players", {}).get("online", 0),
+                          "players": players_online,
                           "max": data.get("players", {}).get("max", None),
                           "version": data.get("version"),
                           "motd": " ".join(data.get("motd", {}).get("clean", [])) if "motd" in data else None
@@ -55,6 +58,12 @@ jobs:
                       "players": 0
                   }
 
+          # add total players snapshot
+          latest["_total"] = {
+              "time": now,
+              "players": total_players
+          }
+
           os.makedirs("data", exist_ok=True)
 
           # save latest snapshot
@@ -67,8 +76,10 @@ jobs:
           if os.path.exists(history_path):
               with open(history_path) as f:
                   history = json.load(f)
+
           cutoff = now - 24*60*60*1000  # keep last 24h
 
+          # update history for each server and total
           for name, snap in latest.items():
               entry = {"time": snap["time"], "players": snap["players"]}
               series = history.get(name, [])
@@ -78,8 +89,6 @@ jobs:
 
           with open(history_path, "w") as f:
               json.dump(history, f, indent=2)
-
-        shell: python
 
       - name: Commit and push
         run: |
