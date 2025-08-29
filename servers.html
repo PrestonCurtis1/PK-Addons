@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const chartId = `chart-${index}`;
 
-    table.row.add([
+    const row = table.row.add([
       name,
       ipCell,
       discordLink,
@@ -138,23 +138,35 @@ document.addEventListener("DOMContentLoaded", async function () {
       data.players || 0,
       data.max || "N/A",
       data.version || '<i class="fas fa-question-circle"></i>',
-      `<canvas id="${chartId}" class="sparkline"></canvas>`
-    ]).draw(false);
+      `<canvas class="sparkline"></canvas>`
+    ]).draw(false).node();
 
-    const series = (history[name] || []).filter(d => d.time >= cutoff);
-    if (series.length) {
-      new Chart(document.getElementById(chartId).getContext("2d"), {
-        type: 'line',
-        data: { datasets: [{ data: series.map(d => ({ x: new Date(d.time), y: d.players })), borderColor: '#4bc0c0', tension: 0.3, pointRadius: 0, borderWidth: 1 }] },
-        options: {
-          responsive: false,
-          plugins: { legend: { display: false } },
-          scales: { x: { type: 'time', time: { unit: 'hour' }, display: false }, y: { display: false } }
-        }
-      });
-    } else {
-      document.getElementById(chartId).replaceWith("⏳");
+    const canvas = row.querySelector('canvas.sparkline');
+    if (canvas) {
+      const series = (history[name] || []).filter(d => d.time >= cutoff);
+      if (series.length) {
+        new Chart(canvas.getContext("2d"), {
+          type: 'line',
+          data: {
+            datasets: [{
+              data: series.map(d => ({ x: new Date(d.time), y: d.players })),
+              borderColor: '#4bc0c0',
+              tension: 0.3,
+              pointRadius: 0,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { min: 0, max: data.max, display: false } }
+          }
+        });
+      } else {
+        canvas.replaceWith(document.createTextNode("⏳"));
+      }
     }
+
   });
 
   document.getElementById('total-players').textContent = totalPlayers;
