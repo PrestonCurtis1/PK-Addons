@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ProjectKorra Servers</title>
 
-<link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/yeti/bootstrap.min.css">
+<link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/vapor/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -79,11 +79,12 @@
 const themes = [
   "cerulean","cosmo","cyborg","darkly","flatly","journal","litera","lumen","lux","materia",
   "minty","morph","pulse","quartz","sandstone","simplex","sketchy","slate","solar","spacelab",
-  "superhero","united","yeti","vapor","zephyr"
+  "superhero","united","vapor","yeti","zephyr"
 ];
 
-let table; // global to refresh
-let totalChart; // global for total sparkline
+let table;
+let totalChart;
+const sparklineCharts = []; // per-server charts
 
 function applyTheme(theme){
   document.getElementById('theme-stylesheet').href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/${theme}/bootstrap.min.css`;
@@ -99,6 +100,19 @@ function applyDarkMode(enabled){
   tableEl.classList.toggle('table-light', !enabled);
 
   localStorage.setItem('pk-dark', enabled ? '1' : '0');
+
+  // update sparkline colors
+  const colors = getSparklineColors();
+  if(totalChart){
+    totalChart.data.datasets[0].borderColor = colors.border;
+    totalChart.data.datasets[0].backgroundColor = colors.background;
+    totalChart.update();
+  }
+  sparklineCharts.forEach(c => {
+    c.data.datasets[0].borderColor = colors.border;
+    c.data.datasets[0].backgroundColor = colors.background;
+    c.update();
+  });
 }
 
 function getSparklineColors(){
@@ -110,7 +124,7 @@ function getSparklineColors(){
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-  // --- Theme selector ---
+  // Theme selector
   const selector = document.getElementById('theme-selector');
   themes.forEach(t => {
     const opt = document.createElement('option');
@@ -119,8 +133,8 @@ document.addEventListener("DOMContentLoaded", async function() {
     selector.appendChild(opt);
   });
 
-  const storedTheme = localStorage.getItem('pk-theme') || 'yeti';
-  const storedDark = localStorage.getItem('pk-dark') === '1';
+  const storedTheme = localStorage.getItem('pk-theme') || 'vapor';
+  const storedDark = localStorage.getItem('pk-dark') === '1' || true; // default dark
   selector.value = storedTheme;
   applyTheme(storedTheme);
   applyDarkMode(storedDark);
@@ -132,16 +146,9 @@ document.addEventListener("DOMContentLoaded", async function() {
     applyDarkMode(enabled);
     document.getElementById('dark-toggle').innerHTML = enabled ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
     table.draw();
-    // update total sparkline colors
-    if(totalChart){
-      const colors = getSparklineColors();
-      totalChart.data.datasets[0].borderColor = colors.border;
-      totalChart.data.datasets[0].backgroundColor = colors.background;
-      totalChart.update();
-    }
   });
 
-  // --- Data fetch & table ---
+  // Fetch data
   const serversUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/servers.json";
   const latestUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_latest.json";
   const historyUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_history.json";
@@ -205,7 +212,7 @@ document.addEventListener("DOMContentLoaded", async function() {
       }
 
       const colors = getSparklineColors();
-      new Chart(canvas.getContext("2d"), {
+      const chart = new Chart(canvas.getContext("2d"), {
         type: "line",
         data: { datasets:[{ label:"Online", data:paddedSeries, borderColor: colors.border, backgroundColor: colors.background, pointRadius:1, pointHitRadius:10, tension:0.3, borderWidth:1, fill:true }] },
         options:{
@@ -215,11 +222,13 @@ document.addEventListener("DOMContentLoaded", async function() {
           scales:{ x:{ type:'time', time:{ unit:'hour' }, display:false }, y:{ beginAtZero:true, display:false } }
         }
       });
+      sparklineCharts.push(chart);
     }
   });
 
   document.getElementById('total-players').textContent = totalPlayers;
 
+  // Total sparkline
   const totalCanvas = document.getElementById("total-sparkline");
   if(totalCanvas){
     const paddedTotal = [];
@@ -244,7 +253,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     const ip=$(this).data('ip');
     navigator.clipboard.writeText(ip).then(()=>alert(`IP address ${ip} copied!`)).catch(console.error);
   });
-
 });
 </script>
 
