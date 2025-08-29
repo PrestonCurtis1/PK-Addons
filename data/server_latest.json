@@ -85,8 +85,11 @@
   },
   "StarWorksMC": {
     "time": 1756509300000,
-    "online": false,
-    "players": 0
+    "online": true,
+    "players": 0,
+    "max": 50,
+    "version": "1.21.7",
+    "motd": "                 \u2620\ud83c\udff9 StarWorksMC \ud83d\udde1\ud83d\udd25                            Bending, Dungeons, Quests - Version 1.21.7"
   },
   "SkyMata.Games": {
     "time": 1756509300000,
@@ -98,8 +101,11 @@
   },
   "DoodCraft": {
     "time": 1756509300000,
-    "online": false,
-    "players": 0
+    "online": true,
+    "players": 0,
+    "max": 100,
+    "version": "1.7.2-1.21.6",
+    "motd": "  \ud83d\udf01 XDoodCraftY \ud83d\udf03  Bending Villages SMP \u00b7 Z\ud83d\udf02 Claim \u2022 \ud83d\udf04 Bend \u2022 \ud83d\udf03 Survive"
   },
   "GearsMC": {
     "time": 1756509300000,
@@ -150,8 +156,11 @@
   },
   "OtherlandMc": {
     "time": 1756509300000,
-    "online": false,
-    "players": 0
+    "online": true,
+    "players": 2,
+    "max": 50,
+    "version": "1.7.2-1.21.8",
+    "motd": "        OtherLandMc V2.0 [JE&amp;BE]          ^ Dimensions Update ^"
   },
   "KorraMC": {
     "time": 1756509300000,
@@ -221,6 +230,6 @@
   },
   "_total": {
     "time": 1756509300000,
-    "players": 362
+    "players": 364
   }
 }
