@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async function() {
   ]);
 
   const now = Date.now();
-  const cutoff = now - 24 * 60 * 60 * 1000; // last 24h
+  const cutoff = now - 24 * 60 * 60 * 1000;
   const intervalMs = 15 * 60 * 1000;
 
   let totalPlayers = 0;
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   servers.forEach(server => {
     const latestData = latest[server.name] || {};
-    totalPlayers += latestData.players ?? 0;
+    totalPlayers += Number(latestData.players) || 0;
 
     const discordLink = server.discord_invite
       ? `<a href="${server.discord_invite}" target="_blank">Join <i class="fa-brands fa-discord"></i></a>`
@@ -119,8 +119,11 @@ document.addEventListener("DOMContentLoaded", async function() {
       const seriesMap = new Map();
       (historyRaw[server.name] || []).forEach(d => {
         const t = Number(d.time);
-        seriesMap.set(t, Number(d.players));
-        totalSeriesMap.set(t, (totalSeriesMap.get(t) || 0) + Number(d.players));
+        const p = Number(d.players);
+        if (!isNaN(t)) {
+          seriesMap.set(t, p);
+          totalSeriesMap.set(t, (totalSeriesMap.get(t) || 0) + p);
+        }
       });
 
       const paddedSeries = [];
@@ -128,39 +131,79 @@ document.addEventListener("DOMContentLoaded", async function() {
         paddedSeries.push({ time: t, players: seriesMap.get(t) ?? 0 });
       }
 
-      const max24 = Math.max(...paddedSeries.map(d => d.players));
+      const max24 = Math.max(...paddedSeries.map(d => d.players), 0);
 
       new Chart(canvas.getContext("2d"), {
         type:"line",
         data:{
-          datasets:[
-            { label:"Online", data:paddedSeries.map(d=>({x:new Date(d.time),y:d.players})), borderColor:'#4bc0c0', backgroundColor:'rgba(75,192,192,0.1)', pointRadius:0, pointHitRadius:10, tension:0.3, borderWidth:1, fill:true },
-            { label:"Max players", data:paddedSeries.map(d=>({x:new Date(d.time),y:latestData.max || 0})), borderColor:'#f54242', borderWidth:1, pointRadius:0, borderDash:[4,2], fill:false },
-            { label:"Prev 24h max", data:paddedSeries.map(d=>({x:new Date(d.time),y:max24})), borderColor:'#f5a142', borderWidth:1, pointRadius:0, borderDash:[2,2], fill:false }
-          ]
+          datasets:[{
+            label:"Online",
+            data:paddedSeries.map(d=>({x:new Date(Number(d.time)),y:d.players})),
+            borderColor:'#4bc0c0',
+            backgroundColor:'rgba(75,192,192,0.1)',
+            pointRadius:0,
+            pointHitRadius:10,
+            tension:0.3,
+            borderWidth:1,
+            fill:true
+          }]
         },
-        options:{ responsive:false, interaction:{ mode:'nearest', intersect:false }, plugins:{ legend:{ display:false }, tooltip:{ mode:'nearest', intersect:false } }, scales:{ y:{ min:0, max: Math.max(latestData.max || 0, max24), display:false }, x:{ display:false } } }
+        options:{
+          responsive:false,
+          interaction:{ mode:'nearest', intersect:false },
+          plugins:{ legend:{ display:false }, tooltip:{ mode:'nearest', intersect:false } },
+          scales:{
+            x:{
+              type:'time',
+              time:{ unit:'hour' },
+              display:false
+            },
+            y:{
+              min:0,
+              max: Math.max(latestData.max || 0, max24 || 1),
+              display:false
+            }
+          }
+        }
       });
     }
   });
 
   document.getElementById('total-players').textContent = totalPlayers;
 
-  // Total sparkline
   const totalCanvas = document.getElementById("total-sparkline");
   if(totalCanvas){
     const paddedTotal = [];
     for(let t = cutoff; t <= now; t += intervalMs){
-      paddedTotal.push({ time: t, players: totalSeriesMap.get(t) ?? 0 });
+      paddedTotal.push({ time:t, players: totalSeriesMap.get(t) ?? 0 });
     }
 
     new Chart(totalCanvas.getContext("2d"), {
       type:"line",
-      data:{ datasets:[{ data: paddedTotal.map(d=>({x:new Date(d.time),y:d.players})), borderColor:'#f5c542', backgroundColor:'rgba(245,197,66,0.2)', pointRadius:0, pointHitRadius:10, tension:0.4, fill:true }]},
-      options:{ responsive:false, interaction:{ mode:'nearest', intersect:false }, plugins:{ legend:{ display:false }, tooltip:{ mode:'nearest', intersect:false } }, scales:{ x:{ display:false }, y:{ display:false } } }
+      data:{
+        datasets:[{
+          data: paddedTotal.map(d=>({x:new Date(Number(d.time)),y:d.players})),
+          borderColor:'#f5c542',
+          backgroundColor:'rgba(245,197,66,0.2)',
+          pointRadius:0,
+          pointHitRadius:10,
+          tension:0.4,
+          fill:true
+        }]
+      },
+      options:{
+        responsive:false,
+        interaction:{ mode:'nearest', intersect:false },
+        plugins:{ legend:{ display:false }, tooltip:{ mode:'nearest', intersect:false } },
+        scales:{
+          x:{ type:'time', time:{ unit:'hour' }, display:false },
+          y:{ min:0, display:false }
+        }
+      }
     });
   }
 
+  // Copy IP handler
   $('#servers-table tbody').on('click','.copy-ip',function(){
     const ip=$(this).data('ip');
     navigator.clipboard.writeText(ip).then(()=>alert(`IP address ${ip} copied!`)).catch(console.error);
@@ -168,6 +211,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 });
 </script>
-
+  
 </body>
 </html>
