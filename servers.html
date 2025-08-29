@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="Cozmyc">
 <meta name="twitter:title" content="ProjectKorra Servers Catalogue">
@@ -25,11 +25,12 @@
 <style>
   canvas.sparkline { width: 120px !important; height: 40px !important; }
   #total-sparkline { width: 300px; height: 50px; display:block; margin:0 auto; }
-  .theme-select { color:#fff; background:#2c2c2c; border:1px solid #6c757d; padding:5px; margin-right:10px; }
-  .theme-select option { color:#000; background:#fff; }
+  select.theme-select { color:#fff; background:#2c2c2c; border:1px solid #6c757d; padding:5px; margin-right:10px; }
+  select.theme-select option { color:#000; background:#fff; }
   #servers-table { width:100% !important; }
 </style>
 </head>
+
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -96,7 +97,7 @@ const themes = [
 
 let table;
 let totalChart;
-const sparklineCharts = []; // per-server charts
+const sparklineCharts = [];
 
 function applyTheme(theme){
   document.getElementById('theme-stylesheet').href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/${theme}/bootstrap.min.css`;
@@ -113,7 +114,6 @@ function applyDarkMode(enabled){
 
   localStorage.setItem('pk-dark', enabled ? '1' : '0');
 
-  // update sparkline colors
   const colors = getSparklineColors();
   if(totalChart){
     totalChart.data.datasets[0].borderColor = colors.border;
@@ -129,10 +129,7 @@ function applyDarkMode(enabled){
 
 function getSparklineColors(){
   const dark = document.body.classList.contains('bg-dark');
-  return {
-    border: dark ? '#4bc0c0' : '#007bff',
-    background: dark ? 'rgba(75,192,192,0.1)' : 'rgba(0,123,255,0.2)'
-  };
+  return { border: dark ? '#4bc0c0' : '#007bff', background: dark ? 'rgba(75,192,192,0.1)' : 'rgba(0,123,255,0.2)' };
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
@@ -146,11 +143,12 @@ document.addEventListener("DOMContentLoaded", async function() {
   });
 
   const storedTheme = localStorage.getItem('pk-theme') || 'vapor';
-  const storedDark = localStorage.getItem('pk-dark') === '1' || true; // default dark
+  const storedDark = localStorage.getItem('pk-dark');
+  const darkMode = storedDark !== null ? storedDark === '1' : true; // persist dark mode between pages
   selector.value = storedTheme;
   applyTheme(storedTheme);
-  applyDarkMode(storedDark);
-  document.getElementById('dark-toggle').innerHTML = storedDark ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+  applyDarkMode(darkMode);
+  document.getElementById('dark-toggle').innerHTML = darkMode ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
 
   selector.addEventListener('change', e => applyTheme(e.target.value));
   document.getElementById('dark-toggle').addEventListener('click', () => {
@@ -160,7 +158,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     table.draw();
   });
 
-  // Fetch data
   const serversUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/servers.json";
   const latestUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_latest.json";
   const historyUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_history.json";
@@ -240,7 +237,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   document.getElementById('total-players').textContent = totalPlayers;
 
-  // Total sparkline
   const totalCanvas = document.getElementById("total-sparkline");
   if(totalCanvas){
     const paddedTotal = [];
@@ -265,6 +261,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     const ip=$(this).data('ip');
     navigator.clipboard.writeText(ip).then(()=>alert(`IP address ${ip} copied!`)).catch(console.error);
   });
+
 });
 </script>
 
