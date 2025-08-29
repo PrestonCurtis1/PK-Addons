@@ -198,5 +198,69 @@
         "bedrock_port": "",
         "discord_invite": "https://discordapp.com/invite/vVBmudt",
         "languages": "en"
-    } 
+    },
+    {
+        "name": "Bendcraft",     
+        "ip": "148.251.71.200:25565",
+        "tags": "Survival / Factions",
+        "bedrock_port": "25588",
+        "discord_invite": "",
+        "languages": "en"
+    },
+    {
+        "name": "BendingMC",     
+        "ip": "play.bendingmc.net",
+        "tags": "Survival",
+        "bedrock_port": "",
+        "discord_invite": "https://discordapp.com/invite/fVT37qY",
+        "languages": "en"
+    },
+    {
+        "name": "ElementCraft",     
+        "ip": "pro.elementcraft.ru",
+        "tags": "Survival",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": "ru"
+    },
+    {
+        "name": "Avatach",     
+        "ip": "avatach.ru",
+        "tags": "Survival",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": "ru"
+    },
+    {
+        "name": "AvatarMC",     
+        "ip": "play.avatarmc.net",
+        "tags": "Survival",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": "ru"
+    },
+    {
+        "name": "Аватарус",     
+        "ip": "avatarus.fun",
+        "tags": "Survival",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": "ru"
+    },
+    {
+        "name": "GenjiWorld",     
+        "ip": "play.genjiworld.fun",
+        "tags": "Survival",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": "ru"
+    },
+    {
+        "name": "Padbenders",     
+        "ip": "padbenders.exaroton.me",
+        "tags": "Survival",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": "en"
+    }
 ]
