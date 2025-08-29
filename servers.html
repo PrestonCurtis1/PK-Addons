@@ -7,7 +7,6 @@
   <meta http-equiv='cache-control' content='no-cache'>
   <meta http-equiv='expires' content='0'>
   <meta http-equiv='pragma' content='no-cache'>
-
   <title>ProjectKorra Servers</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css">
@@ -31,6 +30,11 @@
     canvas.sparkline {
       width: 120px !important;
       height: 40px !important;
+    }
+
+    #total-sparkline {
+      width: 300px;
+      height: 50px;
     }
   </style>
 </head>
@@ -59,10 +63,12 @@
 
   <div class="container my-4">
     <h1 class="text-center mb-4">ProjectKorra Servers</h1>
-    <p class="text-center">
-      Total players over last 24h: <span id="total-players">0</span></p><br>
-      <div class="text-center"><span><canvas id="total-sparkline" style="width:300px; height:50px;"></canvas></span></div>
+    <p class="text-center mb-2">
+      Total players (last 24h): <span id="total-players">0</span>
     </p>
+    <div class="text-center mb-4">
+      <canvas id="total-sparkline"></canvas>
+    </div>
 
     <div class="table-responsive">
       <table id="servers-table" class="table table-dark table-striped table-bordered text-white">
@@ -100,120 +106,125 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
-<script>
-document.addEventListener("DOMContentLoaded", async function () {
-  const serversUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/servers.json";
-  const latestUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_latest.json";
-  const historyUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_history.json";
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+      const serversUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/servers.json";
+      const latestUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_latest.json";
+      const historyUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_history.json";
 
-  const table = $('#servers-table').DataTable({ columnDefs: [{ targets: '_all', orderable: false }] });
+      const table = $('#servers-table').DataTable({ columnDefs: [{ targets: '_all', orderable: false }] });
 
-  const [servers, latest, history] = await Promise.all([
-    fetch(serversUrl).then(r => r.json()),
-    fetch(latestUrl).then(r => r.json()),
-    fetch(historyUrl + "?t=" + Date.now()).then(r => r.json())
-  ]);
+      const [servers, latest, history] = await Promise.all([
+        fetch(serversUrl).then(r => r.json()),
+        fetch(latestUrl).then(r => r.json()),
+        fetch(historyUrl + "?t=" + Date.now()).then(r => r.json())
+      ]);
 
-  const now = Date.now();
-  const cutoff = now - 24 * 60 * 60 * 1000; // last 24h
-  const intervalMs = 15 * 60 * 1000; // 15 minutes
+      const now = Date.now();
+      const cutoff = now - 24 * 60 * 60 * 1000; // last 24h
+      const intervalMs = 15 * 60 * 1000; // 15 minutes
 
-  function padSeries(series) {
-    const map = new Map(series.map(d => [d.time, d.players]));
-    const padded = [];
-    for (let t = cutoff; t <= now; t += intervalMs) {
-      padded.push({ time: t, players: map.get(t) ?? 0 });
-    }
-    return padded;
-  }
+      function padSeries(series) {
+        const map = new Map(series.map(d => [d.time, d.players]));
+        const padded = [];
+        for (let t = cutoff; t <= now; t += intervalMs) {
+          padded.push({ time: t, players: map.get(t) ?? 0 });
+        }
+        return padded;
+      }
 
-  let totalPlayers = 0;
-  const totalSeriesMap = new Map();
+      let totalPlayers = 0;
+      const totalSeriesMap = new Map();
 
-  servers.forEach((server, index) => {
-    const latestData = latest[server.name] || {};
-    totalPlayers += latestData.players || 0;
+      servers.forEach((server, index) => {
+        const latestData = latest[server.name] || {};
+        totalPlayers += latestData.players || 0;
 
-    const discordLink = server.discord_invite
-      ? `<a href="${server.discord_invite}" target="_blank">Join <i class="fa-brands fa-discord"></i></a>`
-      : '<i class="fas fa-question-circle"></i>';
+        const discordLink = server.discord_invite
+          ? `<a href="${server.discord_invite}" target="_blank">Join <i class="fa-brands fa-discord"></i></a>`
+          : '<i class="fas fa-question-circle"></i>';
 
-    const bedrockPort = server.bedrock_port
-      ? `<i class="fas fa-check-circle"></i> ${server.bedrock_port}`
-      : '<i class="fas fa-times"></i>';
+        const bedrockPort = server.bedrock_port
+          ? `<i class="fas fa-check-circle"></i> ${server.bedrock_port}`
+          : '<i class="fas fa-times"></i>';
 
-    const ipCell = server.ip
-      ? `<span class="copy-ip" data-ip="${server.ip}" style="cursor: pointer;">${server.ip} <i class="fas fa-clipboard"></i></span>`
-      : '<i class="fas fa-question-circle"></i>';
+        const ipCell = server.ip
+          ? `<span class="copy-ip" data-ip="${server.ip}" style="cursor: pointer;">${server.ip} <i class="fas fa-clipboard"></i></span>`
+          : '<i class="fas fa-question-circle"></i>';
 
-    const row = table.row.add([
-      server.name,
-      ipCell,
-      discordLink,
-      bedrockPort,
-      latestData.motd || '<i class="fas fa-question-circle"></i>',
-      latestData.players || 0,
-      latestData.max || "N/A",
-      latestData.version || '<i class="fas fa-question-circle"></i>',
-      `<canvas class="sparkline"></canvas>`
-    ]).draw(false).node();
+        const row = table.row.add([
+          server.name,
+          ipCell,
+          discordLink,
+          bedrockPort,
+          latestData.motd || '<i class="fas fa-question-circle"></i>',
+          latestData.players || 0,
+          latestData.max || 0,
+          latestData.version || '<i class="fas fa-question-circle"></i>',
+          `<canvas class="sparkline"></canvas>`
+        ]).draw(false).node();
 
-    const canvas = row.querySelector('canvas.sparkline');
-    if (canvas) {
-      const series = padSeries(history[server.name] || []);
-      series.forEach(d => totalSeriesMap.set(d.time, (totalSeriesMap.get(d.time) ?? 0) + d.players));
+        const canvas = row.querySelector('canvas.sparkline');
+        if (canvas) {
+          const series = padSeries(history[server.name] || []);
+          series.forEach(d => totalSeriesMap.set(d.time, (totalSeriesMap.get(d.time) ?? 0) + d.players));
 
-      new Chart(canvas.getContext("2d"), {
-        type: 'line',
-        data: {
-          datasets: [
-            {
-              data: series.map(d => ({ x: new Date(d.time), y: d.players })),
-              borderColor: '#4bc0c0',
-              backgroundColor: 'rgba(75,192,192,0.1)',
-              tension: 0.3,
-              pointRadius: 0,
-              borderWidth: 1,
-              fill: true
+          new Chart(canvas.getContext("2d"), {
+            type: 'line',
+            data: {
+              datasets: [
+                {
+                  data: series.map(d => ({ x: new Date(d.time), y: d.players })),
+                  borderColor: '#4bc0c0',
+                  backgroundColor: 'rgba(75,192,192,0.1)',
+                  tension: 0.3,
+                  pointRadius: 0,
+                  borderWidth: 1,
+                  fill: true
+                },
+                {
+                  data: series.map(d => ({ x: new Date(d.time), y: latestData.max || 0 })),
+                  borderColor: '#f54242',
+                  borderWidth: 1,
+                  pointRadius: 0,
+                  borderDash: [4, 2],
+                  fill: false
+                }
+              ]
             },
-            {
-              data: series.map(d => ({ x: new Date(d.time), y: latestData.max || 0 })),
-              borderColor: '#f54242',
-              borderWidth: 1,
-              pointRadius: 0,
-              borderDash: [4, 2],
-              fill: false
+            options: {
+              responsive: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { type: 'time', time: { unit: 'hour' }, display: false },
+                y: { min: 0, max: latestData.max || 0, display: false }
+              }
             }
-          ]
-        },
-        options: {
-          responsive: false,
-          plugins: { legend: { display: false } },
-          scales: { y: { min: 0, max: latestData.max, display: false } }
+          });
         }
       });
-    } 
-  });
 
-  document.getElementById('total-players').textContent = totalPlayers;
+      document.getElementById('total-players').textContent = totalPlayers;
 
-  const totalCanvas = document.getElementById('total-sparkline');
-  if (totalCanvas) {
-    const totalSeries = Array.from(totalSeriesMap.entries()).sort((a, b) => a[0] - b[0])
-      .map(([time, players]) => ({ x: new Date(time), y: players }));
+      const totalCanvas = document.getElementById('total-sparkline');
+      if (totalCanvas) {
+        const totalSeries = Array.from(totalSeriesMap.entries()).sort((a, b) => a[0] - b[0])
+          .map(([time, players]) => ({ x: new Date(time), y: players }));
 
-    new Chart(totalCanvas.getContext("2d"), {
-      type: 'line',
-      data: { datasets: [{ data: totalSeries, borderColor:'#f5c542', pointRadius:0, borderWidth:1, tension:0.3 }] },
-      options: { responsive:false, plugins:{ legend:{display:false} }, scales:{ y:{display:false}, x:{display:false} } }
+        if(totalSeries.length){
+          new Chart(totalCanvas.getContext("2d"), {
+            type: 'line',
+            data: { datasets: [{ data: totalSeries, borderColor:'#f5c542', backgroundColor:'rgba(245,197,66,0.2)', pointRadius:0, borderWidth:1, fill:true, tension:0.3 }] },
+            options: { responsive:false, plugins:{ legend:{display:false} }, scales:{ x:{type:'time', display:false}, y:{display:false} } }
+          });
+        }
+      }
+
+      $('#servers-table tbody').on('click', '.copy-ip', function () {
+        const ip = $(this).data('ip');
+        navigator.clipboard.writeText(ip).then(() => alert(`IP address ${ip} copied!`)).catch(console.error);
+      });
     });
-  }
-
-  $('#servers-table tbody').on('click', '.copy-ip', function () {
-    const ip = $(this).data('ip');
-    navigator.clipboard.writeText(ip).then(() => alert(`IP address ${ip} copied!`)).catch(console.error);
-  });
-});
-</script>
+  </script>
 </body>
 </html>
