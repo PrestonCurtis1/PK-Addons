@@ -67,7 +67,6 @@
   <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-
 <script>
 document.addEventListener("DOMContentLoaded", async function() {
   const serversUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/servers.json";
@@ -132,8 +131,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         paddedSeries.push({ time: t, players: seriesMap.get(t) ?? 0 });
       }
 
-      const maxObserved = Math.max(...paddedSeries.map(d => d.players), 0);
-      const scaleMax = Math.max(latestData.max || 0, maxObserved || 1);
+      // Normalized scale (per-server)
+      const maxObserved = Math.max(...paddedSeries.map(d => d.players), 1);
 
       new Chart(canvas.getContext("2d"), {
         type:"line",
@@ -153,10 +152,17 @@ document.addEventListener("DOMContentLoaded", async function() {
         options:{
           responsive:false,
           interaction:{ mode:'nearest', intersect:false },
-          plugins:{ legend:{ display:false }, tooltip:{ mode:'nearest', intersect:false } },
+          plugins:{
+            legend:{ display:false },
+            tooltip:{
+              callbacks:{
+                label: ctx => `${ctx.parsed.y} players online`
+              }
+            }
+          },
           scales:{
             x:{ type:'time', time:{ unit:'hour' }, display:false },
-            y:{ min:0, max: scaleMax, display:false }
+            y:{ min:0, max:maxObserved, display:false }
           }
         }
       });
@@ -172,7 +178,7 @@ document.addEventListener("DOMContentLoaded", async function() {
       paddedTotal.push({ time:t, players: totalSeriesMap.get(t) ?? 0 });
     }
 
-    const maxTotalObserved = Math.max(...paddedTotal.map(d => d.players), 0);
+    const maxTotalObserved = Math.max(...paddedTotal.map(d => d.players), 1);
 
     new Chart(totalCanvas.getContext("2d"), {
       type:"line",
@@ -190,10 +196,17 @@ document.addEventListener("DOMContentLoaded", async function() {
       options:{
         responsive:false,
         interaction:{ mode:'nearest', intersect:false },
-        plugins:{ legend:{ display:false }, tooltip:{ mode:'nearest', intersect:false } },
+        plugins:{
+          legend:{ display:false },
+          tooltip:{
+            callbacks:{
+              label: ctx => `${ctx.parsed.y} players total`
+            }
+          }
+        },
         scales:{
           x:{ type:'time', time:{ unit:'hour' }, display:false },
-          y:{ min:0, max: maxTotalObserved || 1, display:false }
+          y:{ min:0, max:maxTotalObserved, display:false }
         }
       }
     });
@@ -206,6 +219,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 });
 </script>
-  
+
 </body>
 </html>
