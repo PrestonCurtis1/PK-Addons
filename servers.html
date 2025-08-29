@@ -82,9 +82,10 @@ document.addEventListener("DOMContentLoaded", async function() {
     fetch(historyUrl + "?t=" + Date.now()).then(r => r.json())
   ]);
 
+  const intervalMs = 15 * 60 * 1000; // 15 minutes
   const now = Date.now();
-  const cutoff = now - 24 * 60 * 60 * 1000;
-  const intervalMs = 15 * 60 * 1000;
+  const roundedNow = now - (now % intervalMs); // snap to same grid as workflow
+  const cutoff = roundedNow - 24 * 60 * 60 * 1000;
 
   let totalPlayers = 0;
   const totalSeriesMap = new Map();
@@ -127,7 +128,7 @@ document.addEventListener("DOMContentLoaded", async function() {
       });
 
       const paddedSeries = [];
-      for(let t = cutoff; t <= now; t += intervalMs){
+      for(let t = cutoff; t <= roundedNow; t += intervalMs){
         paddedSeries.push({ time: t, players: seriesMap.get(t) ?? 0 });
       }
 
@@ -174,7 +175,7 @@ document.addEventListener("DOMContentLoaded", async function() {
   const totalCanvas = document.getElementById("total-sparkline");
   if(totalCanvas){
     const paddedTotal = [];
-    for(let t = cutoff; t <= now; t += intervalMs){
+    for(let t = cutoff; t <= roundedNow; t += intervalMs){
       paddedTotal.push({ time:t, players: totalSeriesMap.get(t) ?? 0 });
     }
 
