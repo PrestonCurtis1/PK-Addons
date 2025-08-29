@@ -1,12 +1,12 @@
-name: Fetch Server Data
+name: Update Server Data
 
 on:
   schedule:
-    - cron: "*/15 * * * *" 
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 jobs:
-  fetch:
+  update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,18 +14,79 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - name: Install deps
         run: pip install requests
 
-      - name: Fetch data
-        run: python .github/scripts/fetch_playercounts.py
+      - name: Update server snapshots
+        run: |
+          import json, requests, time, os
+
+          servers = json.load(open("servers.json"))
+          now = int(time.time() * 1000)  # ms timestamp
+
+          latest = {}
+          for s in servers:
+              name = s["name"]
+              ip = s["ip"]
+              try:
+                  r = requests.get(f"https://api.mcsrvstat.us/2/{ip}", timeout=10)
+                  data = r.json()
+                  if data.get("online"):
+                      latest[name] = {
+                          "time": now,
+                          "online": True,
+                          "players": data.get("players", {}).get("online", 0),
+                          "max": data.get("players", {}).get("max", None),
+                          "version": data.get("version"),
+                          "motd": " ".join(data.get("motd", {}).get("clean", [])) if "motd" in data else None
+                      }
+                  else:
+                      latest[name] = {
+                          "time": now,
+                          "online": False,
+                          "players": 0
+                      }
+              except Exception as e:
+                  latest[name] = {
+                      "time": now,
+                      "online": False,
+                      "players": 0
+                  }
+
+          os.makedirs("data", exist_ok=True)
+
+          # save latest snapshot
+          with open("data/server_latest.json", "w") as f:
+              json.dump(latest, f, indent=2)
+
+          # load old history if present
+          history_path = "data/server_history.json"
+          history = {}
+          if os.path.exists(history_path):
+              with open(history_path) as f:
+                  history = json.load(f)
+
+          cutoff = now - 24*60*60*1000  # keep last 24h
+
+          for name, snap in latest.items():
+              entry = {"time": snap["time"], "players": snap["players"]}
+              series = history.get(name, [])
+              series.append(entry)
+              # prune old entries
+              series = [d for d in series if d["time"] >= cutoff]
+              history[name] = series
+
+          with open(history_path, "w") as f:
+              json.dump(history, f, indent=2)
+
+        shell: python
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/server_history.json
-          git commit -m "Update server history"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/server_latest.json data/server_history.json
+          git commit -m "Update server data [skip ci]" || echo "No changes"
           git push
