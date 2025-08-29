@@ -208,14 +208,6 @@
         "languages": "en"
     },
     {
-        "name": "BendingMC",     
-        "ip": "play.bendingmc.net",
-        "tags": "Survival",
-        "bedrock_port": "",
-        "discord_invite": "https://discordapp.com/invite/fVT37qY",
-        "languages": "en"
-    },
-    {
         "name": "ElementCraft",     
         "ip": "pro.elementcraft.ru",
         "tags": "Survival",
