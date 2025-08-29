@@ -132,15 +132,20 @@ document.addEventListener("DOMContentLoaded", async function() {
         paddedSeries.push({ time: t, players: seriesMap.get(t) ?? 0 });
       }
 
-      // OPTION A: normalize each sparkline
+      // true normalization: scale Y to [0,1] per server
       const maxObserved = Math.max(...paddedSeries.map(d => d.players), 1);
+      const normalizedSeries = paddedSeries.map(d => ({
+        x: new Date(d.time),
+        y: d.players / maxObserved,
+        raw: d.players
+      }));
 
       new Chart(canvas.getContext("2d"), {
         type:"line",
         data:{
           datasets:[{
             label:"Online",
-            data:paddedSeries.map(d=>({x:new Date(d.time),y:d.players})),
+            data: normalizedSeries,
             borderColor:'#4bc0c0',
             backgroundColor:'rgba(75,192,192,0.1)',
             pointRadius:0,
@@ -155,11 +160,15 @@ document.addEventListener("DOMContentLoaded", async function() {
           interaction:{ mode:'nearest', intersect:false },
           plugins:{
             legend:{ display:false },
-            tooltip:{ callbacks:{ label: ctx => `${ctx.parsed.y} players online` } }
+            tooltip:{
+              callbacks:{
+                label: ctx => `${ctx.raw.raw} players online`
+              }
+            }
           },
           scales:{
             x:{ type:'time', time:{ unit:'hour' }, display:false },
-            y:{ min:0, max:maxObserved, display:false }
+            y:{ min:0, max:1, display:false }
           }
         }
       });
