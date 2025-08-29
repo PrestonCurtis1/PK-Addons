@@ -44,7 +44,7 @@
         <thead class="bg-secondary">
           <tr>
             <th>Name</th><th>IP</th><th>Discord</th><th>Bedrock Port</th>
-            <th>MOTD</th><th>Online Players</th><th>Max Players</th><th>Supported Version(s)</th><th>Last 24h</th>
+            <th>MOTD</th><th>Online Players</th><th>Max Players</th><th>Supported Version(s)</th><th>Activity (24h)</th>
           </tr>
         </thead>
         <tbody id="servers-table-body"></tbody>
@@ -67,6 +67,7 @@
   <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
 <script>
 document.addEventListener("DOMContentLoaded", async function() {
   const serversUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/servers.json";
@@ -131,7 +132,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         paddedSeries.push({ time: t, players: seriesMap.get(t) ?? 0 });
       }
 
-      // Normalized scale (per-server)
+      // OPTION A: normalize each sparkline
       const maxObserved = Math.max(...paddedSeries.map(d => d.players), 1);
 
       new Chart(canvas.getContext("2d"), {
@@ -154,11 +155,7 @@ document.addEventListener("DOMContentLoaded", async function() {
           interaction:{ mode:'nearest', intersect:false },
           plugins:{
             legend:{ display:false },
-            tooltip:{
-              callbacks:{
-                label: ctx => `${ctx.parsed.y} players online`
-              }
-            }
+            tooltip:{ callbacks:{ label: ctx => `${ctx.parsed.y} players online` } }
           },
           scales:{
             x:{ type:'time', time:{ unit:'hour' }, display:false },
@@ -198,11 +195,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         interaction:{ mode:'nearest', intersect:false },
         plugins:{
           legend:{ display:false },
-          tooltip:{
-            callbacks:{
-              label: ctx => `${ctx.parsed.y} players total`
-            }
-          }
+          tooltip:{ callbacks:{ label: ctx => `${ctx.parsed.y} players total` } }
         },
         scales:{
           x:{ type:'time', time:{ unit:'hour' }, display:false },
