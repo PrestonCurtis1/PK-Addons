@@ -20,7 +20,7 @@ jobs:
         run: pip install requests
 
       - name: Fetch data
-        run: python .github/scripts/fetch-playercounts.py
+        run: python .github/scripts/fetch_playercounts.py
 
       - name: Commit and push
         run: |
