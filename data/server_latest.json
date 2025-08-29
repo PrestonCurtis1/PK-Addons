@@ -13,7 +13,7 @@
     "players": 0,
     "max": 500,
     "version": "1.21-1.21.7",
-    "motd": "[1.21+] [BEDROCK] ElementalMC [.gg/elementalmc]              \u1d04\u029c\u1d00s\u1d07 \u1d1b\u029c\u1d07 s\u1d0b\u026a\u1d07s \u1d1c\u1d18\u1d05\u1d00\u1d1b\u1d07"
+    "motd": "[1.21+] [BEDROCK] ElementalMC [.gg/elementalmc]                          \u0299\u1d00s\u1d07\u1d05\u1d0d\u1d04"
   },
   "Benders Destiny": {
     "time": 1756511100000,
@@ -31,7 +31,7 @@
   "Avatarverse": {
     "time": 1756511100000,
     "online": true,
-    "players": 23,
+    "players": 21,
     "max": 200,
     "version": "1.7.2-1.21.7",
     "motd": "      \u2742   The Avatarverse welcomes you...  \u2742     \u6c34     RPG    \u571f    Bending    \u706b    Nations    \u6c14 "
@@ -39,7 +39,7 @@
   "Four Nations": {
     "time": 1756511100000,
     "online": true,
-    "players": 15,
+    "players": 18,
     "max": 250,
     "version": "1.7.2-1.21.5",
     "motd": "FourNationsMC Immersive Avatar World, Builds, Bending, Custom Mobs and Items! -- 1.21.1"
@@ -47,7 +47,7 @@
   "EtherealCraft": {
     "time": 1756511100000,
     "online": true,
-    "players": 4,
+    "players": 5,
     "max": 100,
     "version": "1.7.2-1.21.8",
     "motd": "     ----[--- EtherealCraft [1.21.4] ---]----                     \u262f Master the Four Elements \u262f"
@@ -60,7 +60,7 @@
   "BendersMC": {
     "time": 1756511100000,
     "online": true,
-    "players": 248,
+    "players": 247,
     "max": 1250,
     "version": "1.7.2-1.21.8",
     "motd": "    FOUR ELEMENTS MINECRAFT SERVER           \u029c\u1d1b\u1d1b\u1d18\ua731://\u1d05\u026a\ua731\u1d04\u1d0f\u0280\u1d05.\u0262\u0262/\u0299\u1d07\u0274\u1d05\u1d07\u0280\ua731\u1d0d\u1d04"
@@ -94,7 +94,7 @@
   "SkyMata.Games": {
     "time": 1756511100000,
     "online": true,
-    "players": 17,
+    "players": 16,
     "max": 1000,
     "version": "1.7.2-1.21.8",
     "motd": "             SkyMata | [1.18 - 1.21.8]            HAPPY GHAST UPDATE"
@@ -105,7 +105,7 @@
     "players": 0,
     "max": 100,
     "version": "1.7.2-1.21.6",
-    "motd": "  X\ud83d\udf01 DoodCraft \ud83d\udf03Z  Bending Villages SMP \u00b7 \ud83d\udf02 Claim \u2022 \ud83d\udf04 Bend \u2022 \ud83d\udf03 Survive"
+    "motd": "  \ud83d\udf01 DoodCraft \ud83d\udf03  Bending Villages SMP \u00b7 \ud83d\udf02 Claim . \ud83d\udf04 Bend . \ud83d\udf03 Survive"
   },
   "GearsMC": {
     "time": 1756511100000,
@@ -118,7 +118,7 @@
     "players": 0,
     "max": 999,
     "version": "1.20.4",
-    "motd": "United Elements SMP There is no war in UESMP..."
+    "motd": "United Elements SMP Will you go penguin sledding with me?"
   },
   "The Last Block Bender": {
     "time": 1756511100000,
@@ -142,7 +142,7 @@
     "players": 0,
     "max": 100,
     "version": "1.8.x-1.21.x",
-    "motd": "---------\u00bb :::: Bending Haven :::: \u00ab---------               Welcome player! : [1.9-1.21.4]"
+    "motd": "---------\u00bb :::: Bending Haven :::: \u00ab---------               Welcome player! : [1.8-1.21.4]"
   },
   "Last Element": {
     "time": 1756511100000,
@@ -175,7 +175,7 @@
     "players": 1,
     "max": 69,
     "version": "1.21.8",
-    "motd": "Bendcraft | 1.21.8 | mynemajeff! Better than any other Bending server!"
+    "motd": "Bendcraft | 1.21.8 | why my left hand hurt &gt; Toph is best girl"
   },
   "ElementCraft": {
     "time": 1756511100000,
@@ -196,7 +196,7 @@
   "AvatarMC": {
     "time": 1756511100000,
     "online": true,
-    "players": 1,
+    "players": 0,
     "max": 500,
     "version": "Elytrium",
     "motd": "               AVATARMC \u25aa (1.13.2 - 1.21.7)   \u25ba \u041d\u043e\u0432\u043e\u0441\u0442\u0438: t.me/avatarmc | \u0417\u0430\u0445\u043e\u0434\u0438, \u043f\u0440\u043e\u0448\u0451\u043b \u0432\u0430\u0439\u043f!"
@@ -227,6 +227,6 @@
   },
   "_total": {
     "time": 1756511100000,
-    "players": 345
+    "players": 344
   }
 }
