@@ -28,16 +28,6 @@
       background-color: #ffffff;
     }
 
-    .fa-spinner {
-      animation: spin 1s infinite linear;
-    }
-
-    @keyframes spin {
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
     canvas.sparkline {
       width: 120px !important;
       height: 40px !important;
@@ -65,7 +55,7 @@
       </div>
     </div>
   </nav>
-  
+
   <div class="container my-4">
     <h1 class="text-center mb-4">ProjectKorra Servers</h1>
     <p class="text-center mb-4">Total people playing right now: <span id="total-players">0</span></p>
@@ -85,16 +75,15 @@
             <th>Last 24h</th>
           </tr>
         </thead>
-        <tbody id="servers-table-body">
-        </tbody>
+        <tbody id="servers-table-body"></tbody>
       </table>
     </div>
   </div>
 
   <div class="text-center">
     <p>
-      This site is not owned or operated by ProjectKorra.<br> 
-      If you would like to add, remove, or update a server, feel free to open a PR or issue on 
+      This site is not owned or operated by ProjectKorra.<br>
+      If you would like to add, remove, or update a server, feel free to open a PR or issue on
       <a href="https://github.com/CozmycDev/PK-Addons">the repo</a>.<br>
       Legend: <i class="fas fa-question-circle"></i>=Unknown, <i class="fa-solid fa-x"></i>=Offline/Not Applicable<br>
       Last Updated: Aug 29, 2025
@@ -105,143 +94,76 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
   <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const serversUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/servers.json";
+document.addEventListener("DOMContentLoaded", async function () {
+  const latestUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_latest.json";
   const historyUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_history.json";
 
-  const table = $('#servers-table').DataTable({
-    columnDefs: [{ targets: '_all', orderable: false }]
-  });
+  const table = $('#servers-table').DataTable({ columnDefs: [{ targets: '_all', orderable: false }] });
 
-  async function queryServer(ip, rowIndex) {
-    const serverData = {
-      motd: '<i class="fas fa-spinner"></i>',
-      onlinePlayers: '<i class="fas fa-spinner"></i>',
-      maxPlayers: '<i class="fas fa-spinner"></i>',
-      version: '<i class="fas fa-spinner"></i>'
-    };
+  const [latest, history] = await Promise.all([
+    fetch(latestUrl).then(r => r.json()),
+    fetch(historyUrl + "?t=" + Date.now()).then(r => r.json())
+  ]);
 
-    try {
-      const response = await fetch(`https://api.mcsrvstat.us/2/${ip}`);
-      const data = await response.json();
+  let totalPlayers = 0;
+  const now = Date.now();
+  const cutoff = now - 24*60*60*1000; // last 24h
 
-      if (data.online) {
-        serverData.motd = data.motd.clean.join(" ") || "N/A";
-        serverData.onlinePlayers = data.players.online || "0";
-        serverData.maxPlayers = data.players.max || "N/A";
-        serverData.version = data.version || "N/A";
-      } else {
-        serverData.motd = serverData.onlinePlayers = serverData.maxPlayers = serverData.version = '<i class="fas fa-times"></i>';
-      }
-    } catch (error) {
-      console.error(`Error fetching server data for ${ip}:`, error);
-      serverData.motd = serverData.onlinePlayers = serverData.maxPlayers = serverData.version = '<i class="fas fa-times"></i>';
-    }
+  Object.entries(latest).forEach(([name, data], index) => {
+    totalPlayers += data.players || 0;
 
-    table.cell(rowIndex, 4).data(serverData.motd).draw();
-    table.cell(rowIndex, 5).data(serverData.onlinePlayers).draw();
-    table.cell(rowIndex, 6).data(serverData.maxPlayers).draw();
-    table.cell(rowIndex, 7).data(serverData.version).draw();
+    const discordLink = data.discord_invite
+      ? `<a href="${data.discord_invite}" target="_blank">Join <i class="fa-brands fa-discord"></i></a>`
+      : '<i class="fas fa-question-circle"></i>';
 
-    const totalPlayersElement = document.getElementById('total-players');
-    const allPlayerCells = table.column(5).data();
-    const total = Array.from(allPlayerCells)
-        .map(cell => /^\d+$/.test(cell) ? parseInt(cell) :
-             (cell.match(/>\s*(\d+)\s*</)?.[1] ? parseInt(cell.match(/>\s*(\d+)\s*</)[1]) : 0))
-        .reduce((sum, num) => sum + num, 0);
-    
-    totalPlayersElement.textContent = total;
-  }
+    const bedrockPort = data.bedrock_port
+      ? `<i class="fas fa-check-circle"></i> ${data.bedrock_port}`
+      : '<i class="fas fa-times"></i>';
 
-  async function renderHistory(name, canvasId) {
-    try {
-      const res = await fetch(historyUrl + "?t=" + Date.now());
-      const history = await res.json();
+    const ipCell = data.ip
+      ? `<span class="copy-ip" data-ip="${data.ip}" style="cursor: pointer;">${data.ip} <i class="fas fa-clipboard"></i></span>`
+      : '<i class="fas fa-question-circle"></i>';
 
-      const series = history[name] || [];
-      if (!series.length) {
-        document.getElementById(canvasId).replaceWith("⏳");
-        return;
-      }
+    const chartId = `chart-${index}`;
 
-      new Chart(document.getElementById(canvasId).getContext("2d"), {
+    table.row.add([
+      name,
+      ipCell,
+      discordLink,
+      bedrockPort,
+      data.motd || '<i class="fas fa-question-circle"></i>',
+      data.players || 0,
+      data.max || "N/A",
+      data.version || '<i class="fas fa-question-circle"></i>',
+      `<canvas id="${chartId}" class="sparkline"></canvas>`
+    ]).draw(false);
+
+    const series = (history[name] || []).filter(d => d.time >= cutoff);
+    if (series.length) {
+      new Chart(document.getElementById(chartId).getContext("2d"), {
         type: 'line',
-        data: {
-          datasets: [{
-            data: series.map(d => ({ x: new Date(d.time), y: d.players })),
-            borderColor: '#4bc0c0',
-            tension: 0.3,
-            pointRadius: 0,
-            borderWidth: 1
-          }]
-        },
+        data: { datasets: [{ data: series.map(d => ({ x: new Date(d.time), y: d.players })), borderColor: '#4bc0c0', tension: 0.3, pointRadius: 0, borderWidth: 1 }] },
         options: {
           responsive: false,
           plugins: { legend: { display: false } },
-          scales: {
-            x: { type: 'time', time: { unit: 'hour' }, display: false },
-            y: { display: false }
-          }
+          scales: { x: { type: 'time', time: { unit: 'hour' }, display: false }, y: { display: false } }
         }
       });
-    } catch (e) {
-      console.error("Error rendering history charts:", e);
+    } else {
+      document.getElementById(chartId).replaceWith("⏳");
     }
-  }
+  });
 
-  fetch(serversUrl)
-    .then(response => response.json())
-    .then((data) => {
-      data.forEach((server, index) => {
-        const discordLink = server.discord_invite
-          ? `<a href="${server.discord_invite}" target="_blank">Join <i class="fa-brands fa-discord"></i></a>`
-          : '<i class="fas fa-question-circle"></i>';
+  document.getElementById('total-players').textContent = totalPlayers;
 
-        const bedrockPort = server.bedrock_port
-          ? `<i class="fas fa-check-circle"></i> ${server.bedrock_port}`
-          : '<i class="fas fa-times"></i>';
-
-        const ipCell = server.ip
-          ? `<span class="copy-ip" data-ip="${server.ip}" style="cursor: pointer;">
-               ${server.ip} <i class="fas fa-clipboard"></i>
-             </span>`
-          : '<i class="fas fa-question-circle"></i>';
-
-        const chartId = `chart-${index}`;
-
-        const rowIndex = table.row.add([
-          server.name || '<i class="fas fa-question-circle"></i>',
-          ipCell,
-          discordLink,
-          bedrockPort,
-          '<i class="fas fa-spinner"></i>',
-          '<i class="fas fa-spinner"></i>',
-          '<i class="fas fa-spinner"></i>',
-          '<i class="fas fa-spinner"></i>',
-          `<canvas id="${chartId}" class="sparkline"></canvas>`
-        ]).draw(false).index();
-
-        queryServer(server.ip, rowIndex);
-        renderHistory(server.name, chartId);
-      });
-
-      $('#servers-table tbody').on('click', '.copy-ip', function () {
-        const ip = $(this).data('ip');
-        navigator.clipboard.writeText(ip).then(() => {
-          alert(`IP address ${ip} copied to clipboard!`);
-        }).catch(err => {
-          console.error('Failed to copy text: ', err);
-        });
-      });
-    })
-    .catch(error => {
-      console.error('Error fetching or displaying server data:', error);
-    });
+  $('#servers-table tbody').on('click', '.copy-ip', function () {
+    const ip = $(this).data('ip');
+    navigator.clipboard.writeText(ip).then(() => alert(`IP address ${ip} copied!`)).catch(console.error);
+  });
 });
   </script>
-
 </body>
 </html>
