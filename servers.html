@@ -87,7 +87,6 @@ document.addEventListener("DOMContentLoaded", async function() {
   const intervalMs = 15 * 60 * 1000; // 15 minutes
 
   function padSeries(series) {
-    // Round timestamps to nearest 15-min interval
     const seriesMap = new Map(series.map(d => [Math.floor(d.time/intervalMs)*intervalMs, d.players]));
     const padded = [];
     for(let t = cutoff; t <= now; t += intervalMs) {
@@ -127,7 +126,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     const canvas = row.querySelector('canvas.sparkline');
     if(canvas){
       const series = padSeries(history[server.name] || []);
-      // Add to total map
       series.forEach(d => totalSeriesMap.set(d.time, (totalSeriesMap.get(d.time) || 0) + d.players));
       const max24 = Math.max(...series.map(d => d.players));
 
@@ -171,33 +169,22 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
   });
 
-  // Total players text
   document.getElementById('total-players').textContent = totalPlayers;
 
-  // Total players sparkline
+  // Total players sparkline - robust to misaligned timestamps
   const totalCanvas = document.getElementById("total-sparkline");
   if(totalCanvas){
-    // compute total series from history
-    let totalSeries = [];
-    const allTimes = new Set();
+    const totalSeriesMap = new Map();
     Object.values(history).forEach(series=>{
-      series.forEach(d=>{ allTimes.add(Math.floor(d.time/intervalMs)*intervalMs); });
-    });
-
-    Array.from(allTimes).sort((a,b)=>a-b).forEach(t=>{
-      let sum=0;
-      Object.values(history).forEach(series=>{
-        const entry = series.find(d=>Math.floor(d.time/intervalMs)*intervalMs===t);
-        sum += entry ? entry.players : 0;
+      series.forEach(d=>{
+        const t = Math.floor(d.time/intervalMs)*intervalMs;
+        totalSeriesMap.set(t, (totalSeriesMap.get(t)||0) + d.players);
       });
-      totalSeries.push({ time:t, players: sum });
     });
 
-    // pad missing intervals
     const paddedTotal = [];
-    for(let t = cutoff; t <= now; t+=intervalMs){
-      const match = totalSeries.find(d=>d.time===t);
-      paddedTotal.push({ time:t, players: match ? match.players : 0 });
+    for(let t=cutoff; t<=now; t+=intervalMs){
+      paddedTotal.push({ time:t, players: totalSeriesMap.get(t) || 0 });
     }
 
     new Chart(totalCanvas.getContext("2d"), {
@@ -216,7 +203,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     });
   }
 
-  // Copy IP handler
   $('#servers-table tbody').on('click','.copy-ip',function(){
     const ip=$(this).data('ip');
     navigator.clipboard.writeText(ip).then(()=>alert(`IP address ${ip} copied!`)).catch(console.error);
