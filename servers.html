@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", async function() {
   const selector = document.getElementById('theme-selector');
   themes.forEach(t => { const opt = document.createElement('option'); opt.value=t; opt.textContent=t.charAt(0).toUpperCase()+t.slice(1); selector.appendChild(opt); });
 
-  const storedTheme = localStorage.getItem('pk-theme') || 'vapor';
+  const storedTheme = localStorage.getItem('pk-theme') || 'lux';
   const darkMode = localStorage.getItem('pk-dark') === '1';
   selector.value = storedTheme;
   applyTheme(storedTheme);
