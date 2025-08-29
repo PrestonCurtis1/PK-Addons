@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ProjectKorra Servers</title>
 
-<link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/vapor/bootstrap.min.css">
+<link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/yeti/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -15,9 +15,10 @@
   #total-sparkline { width: 300px; height: 50px; }
   .theme-select { color:#fff; background:#2c2c2c; border:1px solid #6c757d; padding:5px; margin-right:10px; }
   .theme-select option { color:#000; background:#fff; }
+  #servers-table { width:100% !important; }
 </style>
 </head>
-<body class="bg-dark text-white">
+<body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
@@ -34,9 +35,7 @@
 
       <div class="d-flex align-items-center">
         <select id="theme-selector" class="theme-select"></select>
-        <button id="dark-toggle" class="btn btn-outline-light">
-          <i class="fas fa-moon"></i>
-        </button>
+        <button id="dark-toggle" class="btn btn-outline-light"><i class="fas fa-moon"></i></button>
       </div>
     </div>
   </div>
@@ -84,22 +83,23 @@ const themes = [
 ];
 
 function applyTheme(theme){
-  const link = document.getElementById('theme-stylesheet');
-  link.href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/${theme}/bootstrap.min.css`;
+  document.getElementById('theme-stylesheet').href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/${theme}/bootstrap.min.css`;
   localStorage.setItem('pk-theme', theme);
 }
 
 function applyDarkMode(enabled){
-  if(enabled){
-    document.body.classList.add('bg-dark','text-white');
-  }else{
-    document.body.classList.remove('bg-dark','text-white');
-  }
+  document.body.classList.toggle('bg-dark', enabled);
+  document.body.classList.toggle('text-white', enabled);
+
+  const tableEl = document.getElementById('servers-table');
+  tableEl.classList.toggle('table-dark', enabled);
+  tableEl.classList.toggle('table-light', !enabled);
+
   localStorage.setItem('pk-dark', enabled ? '1' : '0');
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Populate theme selector
+document.addEventListener("DOMContentLoaded", async function() {
+  // --- Theme selector ---
   const selector = document.getElementById('theme-selector');
   themes.forEach(t => {
     const opt = document.createElement('option');
@@ -108,20 +108,123 @@ document.addEventListener("DOMContentLoaded", () => {
     selector.appendChild(opt);
   });
 
-  // Load stored theme & dark mode
   const storedTheme = localStorage.getItem('pk-theme') || 'vapor';
   const storedDark = localStorage.getItem('pk-dark') === '1';
   selector.value = storedTheme;
   applyTheme(storedTheme);
   applyDarkMode(storedDark);
+  document.getElementById('dark-toggle').innerHTML = storedDark ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
 
+  selector.addEventListener('change', e => applyTheme(e.target.value));
   document.getElementById('dark-toggle').addEventListener('click', () => {
     const enabled = !document.body.classList.contains('bg-dark');
     applyDarkMode(enabled);
     document.getElementById('dark-toggle').innerHTML = enabled ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+    table.draw();
   });
 
-  selector.addEventListener('change', e => applyTheme(e.target.value));
+  // --- Data fetch & table ---
+  const serversUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/servers.json";
+  const latestUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_latest.json";
+  const historyUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_history.json";
+
+  const table = $('#servers-table').DataTable({ columnDefs:[{ targets:'_all', orderable:false }] });
+
+  const [servers, latest, historyRaw] = await Promise.all([
+    fetch(serversUrl).then(r => r.json()),
+    fetch(latestUrl).then(r => r.json()),
+    fetch(historyUrl + "?t=" + Date.now()).then(r => r.json())
+  ]);
+
+  const intervalMs = 15 * 60 * 1000;
+  const now = Date.now();
+  const roundedNow = now - (now % intervalMs);
+  const cutoff = roundedNow - 24 * 60 * 60 * 1000;
+
+  let totalPlayers = 0;
+  const totalSeriesMap = new Map();
+
+  servers.forEach(server => {
+    const latestData = latest[server.name] || {};
+    totalPlayers += Number(latestData.players) || 0;
+
+    const discordLink = server.discord_invite
+      ? `<a href="${server.discord_invite}" target="_blank">Join <i class="fa-brands fa-discord"></i></a>`
+      : '<i class="fas fa-question-circle"></i>';
+
+    const bedrockPort = server.bedrock_port
+      ? `<i class="fas fa-check-circle"></i> ${server.bedrock_port}`
+      : '<i class="fas fa-times"></i>';
+
+    const ipCell = server.ip
+      ? `<span class="copy-ip" data-ip="${server.ip}" style="cursor:pointer;">${server.ip} <i class="fas fa-clipboard"></i></span>`
+      : '<i class="fas fa-question-circle"></i>';
+
+    const row = table.row.add([
+      server.name, ipCell, discordLink, bedrockPort,
+      latestData.motd || '<i class="fas fa-question-circle"></i>',
+      latestData.players ?? 0,
+      latestData.max ?? "N/A",
+      latestData.version ?? '<i class="fas fa-question-circle"></i>',
+      `<canvas class="sparkline"></canvas>`
+    ]).draw(false).node();
+
+    const canvas = row.querySelector('canvas.sparkline');
+    if(canvas){
+      const seriesMap = new Map();
+      (historyRaw[server.name] || []).forEach(d => {
+        const t = Number(d.time);
+        const p = Number(d.players);
+        if (!isNaN(t)) {
+          seriesMap.set(t, p);
+          totalSeriesMap.set(t, (totalSeriesMap.get(t) || 0) + p);
+        }
+      });
+
+      const paddedSeries = [];
+      for(let t = cutoff; t <= roundedNow; t += intervalMs){
+        paddedSeries.push({ x: new Date(t), y: seriesMap.get(t) ?? 0 });
+      }
+
+      new Chart(canvas.getContext("2d"), {
+        type: "line",
+        data: { datasets:[{ label:"Online", data:paddedSeries, borderColor:'#4bc0c0', backgroundColor:'rgba(75,192,192,0.1)', pointRadius:1, pointHitRadius:10, tension:0.3, borderWidth:1, fill:true }] },
+        options:{
+          responsive:false,
+          interaction:{ mode:'nearest', intersect:false },
+          plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: ctx => `${ctx.parsed.y} players online` } } },
+          scales:{ x:{ type:'time', time:{ unit:'hour' }, display:false }, y:{ beginAtZero:true, display:false } }
+        }
+      });
+    }
+  });
+
+  document.getElementById('total-players').textContent = totalPlayers;
+
+  const totalCanvas = document.getElementById("total-sparkline");
+  if(totalCanvas){
+    const paddedTotal = [];
+    for(let t = cutoff; t <= roundedNow; t += intervalMs){
+      paddedTotal.push({ x:new Date(t), y: totalSeriesMap.get(t) ?? 0 });
+    }
+
+    new Chart(totalCanvas.getContext("2d"), {
+      type:"line",
+      data:{ datasets:[{ data:paddedTotal, borderColor:'#f5c542', backgroundColor:'rgba(245,197,66,0.2)', pointRadius:1, pointHitRadius:10, tension:0.4, fill:true }] },
+      options:{
+        responsive:false,
+        interaction:{ mode:'nearest', intersect:false },
+        plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: ctx => `${ctx.parsed.y} players total` } } },
+        scales:{ x:{ type:'time', time:{ unit:'hour' }, display:false }, y:{ beginAtZero:true, display:false } }
+      }
+    });
+  }
+
+  $('#servers-table tbody').on('click','.copy-ip',function(){
+    const ip=$(this).data('ip');
+    navigator.clipboard.writeText(ip).then(()=>alert(`IP address ${ip} copied!`)).catch(console.error);
+  });
+
 });
 </script>
 
