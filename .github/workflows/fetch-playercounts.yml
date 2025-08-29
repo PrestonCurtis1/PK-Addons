@@ -67,15 +67,13 @@ jobs:
           if os.path.exists(history_path):
               with open(history_path) as f:
                   history = json.load(f)
-
           cutoff = now - 24*60*60*1000  # keep last 24h
 
           for name, snap in latest.items():
               entry = {"time": snap["time"], "players": snap["players"]}
               series = history.get(name, [])
               series.append(entry)
-              # prune old entries
-              series = [d for d in series if d["time"] >= cutoff]
+              series = [d for d in series if int(d["time"]) >= cutoff]
               history[name] = series
 
           with open(history_path, "w") as f:
