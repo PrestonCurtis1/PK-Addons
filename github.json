@@ -42,14 +42,14 @@
         "name": "JedCore",
         "author": "jedk1 (Cozmyc)",
         "category": "Side Plugin / Ability Pack",
-        "last_update": "Sep 20, 2024",
-        "latest_version": "2.15.0 pre-release 2",
+        "last_update": "Apr 6, 2025",
+        "latest_version": "2.15.0 pre-release 3.5",
         "download_url": "https://github.com/CozmycDev/JedCore/releases",
         "source_url": "https://github.com/CozmycDev/JedCore",
         "min_mc_version": "1.20.2",
         "max_mc_version": "1.21.1",
         "min_pk_version": "1.11.1",
-        "max_pk_version": "1.12.0-BETA"
+        "max_pk_version": "1.12.0"
     },
     {
         "name": "Guidance",
@@ -81,7 +81,7 @@
         "name": "SandSpout",
         "author": "Cozmyc, luxaelni",
         "category": "Ability / Earth / Sand",
-        "last_update": "Mar 29, 2025",
+        "last_update": "Mar 19, 2025",
         "latest_version": "1.1.0",
         "download_url": "https://github.com/CozmycDev/PK-SandSpout/releases",
         "source_url": "https://github.com/CozmycDev/PK-SandSpout/",
@@ -661,5 +661,44 @@
         "max_mc_version": "",
         "min_pk_version": "",
         "max_pk_version": ""
-    }
+    },
+    {
+        "name": "Fireproof",
+        "author": "Cozmyc, luxaelni",
+        "category": "Ability / Firebending",
+        "last_update": "May 5, 2025",
+        "latest_version": "0.0.2",
+        "download_url": "https://github.com/CozmycDev/PK-Fireproof/releases",
+        "source_url": "https://github.com/CozmycDev/PK-Fireproof/",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "",
+        "max_pk_version": ""
+    },
+    {
+        "name": "VineManipulation",
+        "author": "Cozmyc",
+        "category": "Ability / Water / Plantbending",
+        "last_update": "Apr 25, 2025",
+        "latest_version": "2.0.0",
+        "download_url": "https://github.com/CozmycDev/PK-Vine/releases",
+        "source_url": "https://github.com/CozmycDev/PK-Vine/",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "",
+        "max_pk_version": ""
+    },
+    {
+        "name": "SonicBoom",
+        "author": "Cozmyc",
+        "category": "Ability / Airbending",
+        "last_update": "Mar 27, 2025",
+        "latest_version": "1.0.0",
+        "download_url": "https://github.com/CozmycDev/PK-SonicBoom/releases",
+        "source_url": "https://github.com/CozmycDev/PK-SonicBoom/",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "",
+        "max_pk_version": ""
+    },
 ]
