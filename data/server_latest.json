@@ -156,8 +156,11 @@
   },
   "OtherlandMc": {
     "time": 1756517400000,
-    "online": false,
-    "players": 0
+    "online": true,
+    "players": 1,
+    "max": 50,
+    "version": "1.7.2-1.21.8",
+    "motd": "        OtherLandMc V2.0 [JE&amp;BE]          ^ Dimensions Update ^"
   },
   "KorraMC": {
     "time": 1756517400000,
@@ -227,6 +230,6 @@
   },
   "_total": {
     "time": 1756517400000,
-    "players": 325
+    "players": 326
   }
 }
