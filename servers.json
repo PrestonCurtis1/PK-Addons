@@ -224,22 +224,6 @@
         "languages": "ru"
     },
     {
-        "name": "AvatarMC",     
-        "ip": "play.avatarmc.net",
-        "tags": "Survival",
-        "bedrock_port": "",
-        "discord_invite": "",
-        "languages": "ru"
-    },
-    {
-        "name": "AvatarMC",     
-        "ip": "avatarmc.pro",
-        "tags": "Survival",
-        "bedrock_port": "",
-        "discord_invite": "",
-        "languages": ""
-    },
-    {
         "name": "Аватарус",     
         "ip": "avatarus.fun",
         "tags": "Survival",
