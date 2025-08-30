@@ -185,8 +185,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const sourceLink = entry.source_url
         ? (entry.source_url !== "DEAD LINK"
             ? (entry.source_url.includes("github.com")
-                ? `<a href="${entry.source_url}" target="_blank"><i class="fa-brands fa-github"></i></a> <a href="${entry.source_url}" target="_blank">↗️</a>`
-                : `<a href="${entry.source_url}" target="_blank">🌐</a> <a href="${entry.download_url}" target="_blank">↗️</a>`)
+                ? `<a href="${entry.source_url}" target="_blank"><i class="fa-brands fa-github"></i></a> <a href="${entry.download_url}" target="_blank"><i class="fa-solid fa-download"></i></a>`
+                : `<a href="${entry.source_url}" target="_blank">🌐</a> <a href="${entry.download_url}" target="_blank"><i class="fa-solid fa-download"></i></a>`)
             : '<i class="fa-solid fa-x"></i>')
         : '<i class="fas fa-question-circle"></i>';
 
