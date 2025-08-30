@@ -1,3 +1,4 @@
+[![pages-build-deployment](https://github.com/CozmycDev/PK-Addons/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/CozmycDev/PK-Addons/actions/workflows/pages/pages-build-deployment)
 [![Server Data Updates](https://github.com/CozmycDev/PK-Addons/actions/workflows/update_server_data.yml/badge.svg)](https://github.com/CozmycDev/PK-Addons/actions/workflows/update_server_data.yml)
 
 https://cozmycdev.github.io/PK-Addons/
