@@ -1,3 +1,5 @@
+[![Server Data Updates](https://github.com/CozmycDev/PK-Addons/actions/workflows/update_server_data.yml/badge.svg)](https://github.com/CozmycDev/PK-Addons/actions/workflows/update_server_data.yml)
+
 https://cozmycdev.github.io/PK-Addons/
 
 Welcome to the ProjectKorra Addons Repository! This site aggregates addons and side plugins from the ProjectKorra forums, GitHub, and other sources, making it easier for admins, developers, and ProjectKorra enthusiasts to find what they need.
