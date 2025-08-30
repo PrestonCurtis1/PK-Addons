@@ -232,6 +232,14 @@
         "languages": "ru"
     },
     {
+        "name": "AvatarMC",     
+        "ip": "avatarmc.pro",
+        "tags": "Survival",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": ""
+    },
+    {
         "name": "Аватарус",     
         "ip": "avatarus.fun",
         "tags": "Survival",
@@ -254,5 +262,29 @@
         "bedrock_port": "",
         "discord_invite": "",
         "languages": "en"
+    },
+    {
+        "name": "Avatar IL",     
+        "ip": "avataril.mcpe.lol",
+        "tags": "Survival",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": ""
+    },
+    {
+        "name": "Avatar Stories",     
+        "ip": "mc.avatarstories.net",
+        "tags": "RPG",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": ""
+    },
+    {
+        "name": "Elementrix",     
+        "ip": "play.elementrix.it:25566",
+        "tags": "Survival",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": ""
     }
 ]
