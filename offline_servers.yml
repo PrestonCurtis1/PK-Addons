@@ -1,0 +1,74 @@
+[
+    {
+        "name": "SpiritWorld",     
+        "ip": "spiritworld.su",
+        "tags": "SMP / Arenas",
+        "bedrock_port": "",
+        "discord_invite": "https://discord.gg/StsAEjHeaf",
+        "languages": "ru"
+    },
+    {
+        "name": "MythicFarlands",     
+        "ip": "mythicfarlands.apexmc.co",
+        "tags": "SMP",
+        "bedrock_port": "",
+        "discord_invite": "https://discord.gg/KGsANFJQY6",
+        "languages": "en"
+    },
+    {
+        "name": "Last Element",     
+        "ip": "lastelement.apexmc.co",
+        "tags": "",
+        "bedrock_port": "",
+        "discord_invite": "https://discord.gg/pj2ga4kGmd",
+        "languages": "en"
+    },
+    {
+        "name": "KorraMC",     
+        "ip": "playastralmc.com",
+        "tags": "Survival / Arena",
+        "bedrock_port": "15.235.110.30:26921",
+        "discord_invite": "https://discord.gg/9sdfeFfr",
+        "languages": "en"
+    },
+    {
+        "name": "GhastNetwork",     
+        "ip": "play.ghastmc.ir",
+        "tags": "",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": "per, en"
+    },
+    {
+        "name": "GearsMC",     
+        "ip": "play.gearsmc.com",
+        "tags": "Factions",
+        "bedrock_port": "19132",
+        "discord_invite": "https://discord.gg/SqHv3Pdvvt",
+        "languages": "en"
+    },
+    {
+        "name": "Elemental SMP",     
+        "ip": "mc.elementalmc.co",
+        "tags": "SMP",
+        "bedrock_port": "",
+        "discord_invite": "https://elementalmc.co/discord",
+        "languages": "en"
+    },
+    {
+        "name": "Bending Masters",     
+        "ip": "bendingmasters.apexmc.co",
+        "tags": "Arena",
+        "bedrock_port": "",
+        "discord_invite": "https://discordapp.com/invite/vVBmudt",
+        "languages": "en"
+    },
+    {
+        "name": "Benders Destiny",     
+        "ip": "play.bendersdestiny.com",
+        "tags": "Lands / SMP",
+        "bedrock_port": "",
+        "discord_invite": "https://discord.gg/S2sztHzKsv",
+        "languages": "en"
+    }
+]
