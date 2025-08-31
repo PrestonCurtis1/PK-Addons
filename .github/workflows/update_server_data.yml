@@ -2,7 +2,7 @@ name: Update Server Data
 
 on:
   schedule:
-    - cron: "*/12 * * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -26,67 +26,60 @@ jobs:
 
           servers = json.load(open("servers.json"))
 
-          interval_ms = 15 * 60 * 1000  # 15 minutes in ms
-          now = int(time.time() * 1000)
-          snap_time = now - (now % interval_ms)  # round down to nearest 15-min
-
+          now = int(time.time() * 1000)  # raw timestamp, no snapping
           latest = {}
           total_players = 0
 
           for s in servers:
-              name = s["name"]
-              ip = s["ip"]
+              name, ip = s["name"], s["ip"]
               try:
                   r = requests.get(f"https://api.mcsrvstat.us/2/{ip}", timeout=10)
                   data = r.json()
                   if data.get("online"):
-                      players_online = data.get("players", {}).get("online", 0)
+                      players = data.get("players", {})
+                      players_online = players.get("online", 0)
+                      playernames = players.get("list", [])
                       total_players += players_online
                       latest[name] = {
-                          "time": snap_time,
+                          "time": now,
                           "online": True,
                           "players": players_online,
-                          "max": data.get("players", {}).get("max"),
+                          "playernames": playernames,
+                          "max": players.get("max"),
                           "version": data.get("version"),
                           "motd": " ".join(data.get("motd", {}).get("clean", [])) if "motd" in data else None
                       }
                   else:
                       latest[name] = {
-                          "time": snap_time,
+                          "time": now,
                           "online": False,
-                          "players": 0
+                          "players": 0,
+                          "playernames": []
                       }
               except Exception:
                   latest[name] = {
-                      "time": snap_time,
+                      "time": now,
                       "online": False,
-                      "players": 0
+                      "players": 0,
+                      "playernames": []
                   }
 
-          # add total players snapshot
-          latest["_total"] = {
-              "time": snap_time,
-              "players": total_players
-          }
+          latest["_total"] = {"time": now, "players": total_players}
 
           os.makedirs("data", exist_ok=True)
-
-          # save latest snapshot
           with open("data/server_latest.json", "w") as f:
               json.dump(latest, f, indent=2)
 
-          # load old history if exists
           history_path = "data/server_history.json"
           history = {}
           if os.path.exists(history_path):
               with open(history_path) as f:
                   history = json.load(f)
 
-          cutoff = snap_time - 24 * 60 * 60 * 1000  # keep last 24h
+          cutoff = now - 24 * 60 * 60 * 1000  # keep 24h only
 
-          # update history
           for name, snap in latest.items():
-              entry = {"time": snap_time, "players": snap["players"]}
+              entry = {"time": now, "players": snap["players"]}
               series = history.get(name, [])
               series.append(entry)
               series = [d for d in series if int(d["time"]) >= cutoff]
