@@ -198,5 +198,13 @@
         "bedrock_port": "",
         "discord_invite": "",
         "languages": ""
+    },
+    {
+        "name": "KorraMC",     
+        "ip": "korra.mcserver.us",
+        "tags": "Survival",
+        "bedrock_port": "19132",
+        "discord_invite": "https://discord.gg/dVnEAUqmgS",
+        "languages": ""
     }
 ]
