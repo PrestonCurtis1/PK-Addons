@@ -178,6 +178,9 @@ document.addEventListener("DOMContentLoaded", async function() {
             plugins: {
               legend: { display: false },
               tooltip: {
+                bodyFont: { size: 8 }, 
+                titleFont: { size: 8 },
+                padding: 4,
                 callbacks: {
                   label: ctx => `${ctx.parsed.y} players online`
                 }
@@ -194,7 +197,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     
     const totalCanvas = document.getElementById("total-sparkline");
     if (totalCanvas && historyRaw["_total"]) {
-        const ctx = fixCanvasResolution(totalCanvas, 300, 50);
+        const ctx = fixCanvasResolution(totalCanvas, 420, 120);
         const rawSeries = historyRaw["_total"].map(d => ({
             x: new Date(Number(d.time)),
             y: Number(d.players)
