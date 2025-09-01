@@ -64,7 +64,8 @@ let table, totalChart;
 const sparklineCharts = [];
 
 function applyTheme(theme){
-  document.getElementById('theme-stylesheet').href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/${theme}/bootstrap.min.css`;
+  document.getElementById('theme-stylesheet').href =
+    `https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/${theme}/bootstrap.min.css`;
   localStorage.setItem('pk-theme', theme);
 }
 
@@ -76,13 +77,24 @@ function applyDarkMode(enabled){
   tableEl.classList.toggle('table-light', !enabled);
   localStorage.setItem('pk-dark', enabled ? '1' : '0');
   const colors = getSparklineColors();
-  if(totalChart){ totalChart.data.datasets[0].borderColor = colors.border; totalChart.data.datasets[0].backgroundColor = colors.background; totalChart.update(); }
-  sparklineCharts.forEach(c => { c.data.datasets[0].borderColor = colors.border; c.data.datasets[0].backgroundColor = colors.background; c.update(); });
+  if(totalChart){
+    totalChart.data.datasets[0].borderColor = colors.border;
+    totalChart.data.datasets[0].backgroundColor = colors.background;
+    totalChart.update();
+  }
+  sparklineCharts.forEach(c => {
+    c.data.datasets[0].borderColor = colors.border;
+    c.data.datasets[0].backgroundColor = colors.background;
+    c.update();
+  });
 }
 
 function getSparklineColors(){
   const dark = document.body.classList.contains('bg-dark');
-  return { border: dark ? '#4bc0c0' : '#007bff', background: dark ? 'rgba(75,192,192,0.1)' : 'rgba(0,123,255,0.2)' };
+  return {
+    border: dark ? '#4bc0c0' : '#007bff',
+    background: dark ? 'rgba(75,192,192,0.1)' : 'rgba(0,123,255,0.2)'
+  };
 }
 
 function fixCanvasResolution(canvas, width, height) {
@@ -94,22 +106,48 @@ function fixCanvasResolution(canvas, width, height) {
   return canvas.getContext("2d");
 }
 
+// blend of fill ratio + variance
+function computeActivityScore(history, maxPlayers) {
+  if (!history || history.length === 0) return 0;
+  const values = history.map(d => Number(d.players));
+  const avg = values.reduce((a, b) => a + b, 0) / values.length;
+  const peak = Math.max(...values);
+
+  const denom = (maxPlayers && maxPlayers > 0) ? maxPlayers : peak || 1;
+  const fillRatio = avg / denom;
+
+  const mean = avg || 1;
+  const variance = values.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / values.length;
+  const stddev = Math.sqrt(variance);
+  const varianceRatio = stddev / mean;
+
+  const score = 0.6 * fillRatio + 0.4 * varianceRatio;
+  return +score.toFixed(3);
+}
+
 document.addEventListener("DOMContentLoaded", async function() {
   const selector = document.getElementById('theme-selector');
-  themes.forEach(t => { const opt = document.createElement('option'); opt.value=t; opt.textContent=t.charAt(0).toUpperCase()+t.slice(1); selector.appendChild(opt); });
+  themes.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t;
+    opt.textContent = t.charAt(0).toUpperCase() + t.slice(1);
+    selector.appendChild(opt);
+  });
 
   const storedTheme = localStorage.getItem('pk-theme') || 'lux';
   const darkMode = localStorage.getItem('pk-dark') === '1';
   selector.value = storedTheme;
   applyTheme(storedTheme);
   applyDarkMode(darkMode);
-  document.getElementById('dark-toggle').innerHTML = darkMode ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+  document.getElementById('dark-toggle').innerHTML =
+    darkMode ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
 
   selector.addEventListener('change', e => applyTheme(e.target.value));
   document.getElementById('dark-toggle').addEventListener('click', () => {
     const enabled = !document.body.classList.contains('bg-dark');
     applyDarkMode(enabled);
-    document.getElementById('dark-toggle').innerHTML = enabled ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+    document.getElementById('dark-toggle').innerHTML =
+      enabled ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
     table?.draw();
   });
 
@@ -117,7 +155,14 @@ document.addEventListener("DOMContentLoaded", async function() {
   const latestUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_latest.json";
   const historyUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_history.json";
 
-  table = $('#servers-table').DataTable({ columnDefs:[{ targets:'_all', orderable:false }] });
+  table = $('#servers-table').DataTable({
+    columnDefs: [
+      { targets: '_all', orderable: false },
+      { targets: [5], orderable: true },   // online players sortable
+      { targets: [9], visible: false },    // hide score column
+      { targets: [8], orderData: [9] }     // activity column sorts by hidden score
+    ]
+  });
 
   try {
     const [servers, latest, historyRaw] = await Promise.all([
@@ -131,22 +176,37 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     servers.forEach(server=>{
       const latestData = latest[server.name] || {};
-      const discordLink = server.discord_invite ? `<a href="${server.discord_invite}" target="_blank">Join <i class="fa-brands fa-discord"></i></a>` : '<i class="fas fa-question-circle"></i>';
-      const bedrockPort = server.bedrock_port ? `<i class="fas fa-check-circle"></i> ${server.bedrock_port}` : '<i class="fas fa-times"></i>';
-      const ipCell = server.ip ? `<span class="copy-ip" data-ip="${server.ip}" style="cursor:pointer;">${server.ip} <i class="fas fa-clipboard"></i></span>` : '<i class="fas fa-question-circle"></i>';
+      const discordLink = server.discord_invite
+        ? `<a href="${server.discord_invite}" target="_blank">Join <i class="fa-brands fa-discord"></i></a>`
+        : '<i class="fas fa-question-circle"></i>';
+      const bedrockPort = server.bedrock_port
+        ? `<i class="fas fa-check-circle"></i> ${server.bedrock_port}`
+        : '<i class="fas fa-times"></i>';
+      const ipCell = server.ip
+        ? `<span class="copy-ip" data-ip="${server.ip}" style="cursor:pointer;">${server.ip} <i class="fas fa-clipboard"></i></span>`
+        : '<i class="fas fa-question-circle"></i>';
 
       const playerNames = (latestData.playernames||[]).join(", ");
+      const playerCount = latestData.players ?? 0;
       const playerCell = playerNames
-          ? `<span data-bs-toggle="tooltip" title="${playerNames}">${latestData.players??0}</span>`
-          : (latestData.players??0);
+        ? `<span data-bs-toggle="tooltip" title="${playerNames}">${playerCount}</span>`
+        : playerCount;
+
+      const score = computeActivityScore(historyRaw[server.name], latestData.max);
 
       const row = table.row.add([
-        server.name, ipCell, discordLink, bedrockPort,
+        server.name,
+        ipCell,
+        discordLink,
+        bedrockPort,
         latestData.motd||'<i class="fas fa-question-circle"></i>',
         playerCell,
         latestData.max??"N/A",
         latestData.version??'<i class="fas fa-question-circle"></i>',
-        `<canvas class="sparkline"></canvas>`
+        `<div data-bs-toggle="tooltip" title="Activity Score: ${score}">
+           <canvas class="sparkline"></canvas>
+         </div>`,
+        score
       ]).draw(false).node();
 
       const canvas = row.querySelector('canvas.sparkline');
@@ -178,7 +238,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             plugins: {
               legend: { display: false },
               tooltip: {
-                bodyFont: { size: 8 }, 
+                bodyFont: { size: 8 },
                 titleFont: { size: 8 },
                 padding: 4,
                 callbacks: {
@@ -194,45 +254,45 @@ document.addEventListener("DOMContentLoaded", async function() {
         }));
       }
     });
-    
+
     const totalCanvas = document.getElementById("total-sparkline");
     if (totalCanvas && historyRaw["_total"]) {
-        const ctx = fixCanvasResolution(totalCanvas, 420, 120);
-        const rawSeries = historyRaw["_total"].map(d => ({
-            x: new Date(Number(d.time)),
-            y: Number(d.players)
-        }));
-        const colors = getSparklineColors();
-        totalChart = new Chart(ctx, {
-          type: "line",
-          data: {
-            datasets: [{
-              data: rawSeries,
-              borderColor: colors.border,
-              backgroundColor: colors.background,
-              pointRadius: 1,
-              pointHitRadius: 10,
-              tension: 0.4,
-              fill: true
-            }]
-          },
-          options: {
-            responsive: false,
-            interaction: { mode: 'nearest', intersect: false },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  label: ctx => `${ctx.parsed.y} players total`
-                }
+      const ctx = fixCanvasResolution(totalCanvas, 420, 120);
+      const rawSeries = historyRaw["_total"].map(d => ({
+        x: new Date(Number(d.time)),
+        y: Number(d.players)
+      }));
+      const colors = getSparklineColors();
+      totalChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          datasets: [{
+            data: rawSeries,
+            borderColor: colors.border,
+            backgroundColor: colors.background,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: false,
+          interaction: { mode: 'nearest', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.parsed.y} players total`
               }
-            },
-            scales: {
-              x: { type: 'time', time: { unit: 'hour' }, display: false },
-              y: { beginAtZero: true, display: false }
             }
+          },
+          scales: {
+            x: { type: 'time', time: { unit: 'hour' }, display: false },
+            y: { beginAtZero: true, display: false }
           }
-        });
+        }
+      });
     }
 
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -240,15 +300,17 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     $('#servers-table tbody').on('click','.copy-ip',function(){
       const ip=$(this).data('ip');
-      navigator.clipboard.writeText(ip).then(()=>alert(`IP address ${ip} copied!`)).catch(console.error);
+      navigator.clipboard.writeText(ip)
+        .then(()=>alert(`IP address ${ip} copied!`))
+        .catch(console.error);
     });
 
   } catch(e){
     console.error("Failed to load server data", e);
   }
-
 });
 </script>
+
   
 </head>
 
