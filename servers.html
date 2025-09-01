@@ -25,8 +25,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <style>
-canvas.sparkline { width: 120px !important; height: 40px !important; }
-#total-sparkline { width: 300px; height: 50px; display:block; margin:0 auto; }
 select.theme-select { color:#fff; background:#2c2c2c; border:1px solid #6c757d; padding:5px; margin-right:10px; }
 select.theme-select option { color:#000; background:#fff; }
 #servers-table { width:100% !important; }
@@ -87,6 +85,15 @@ function getSparklineColors(){
   return { border: dark ? '#4bc0c0' : '#007bff', background: dark ? 'rgba(75,192,192,0.1)' : 'rgba(0,123,255,0.2)' };
 }
 
+function fixCanvasResolution(canvas, width, height) {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.style.width = width + "px";
+  canvas.style.height = height + "px";
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  return canvas.getContext("2d");
+}
+
 document.addEventListener("DOMContentLoaded", async function() {
   const selector = document.getElementById('theme-selector');
   themes.forEach(t => { const opt = document.createElement('option'); opt.value=t; opt.textContent=t.charAt(0).toUpperCase()+t.slice(1); selector.appendChild(opt); });
@@ -143,26 +150,86 @@ document.addEventListener("DOMContentLoaded", async function() {
       ]).draw(false).node();
 
       const canvas = row.querySelector('canvas.sparkline');
-      if(canvas && historyRaw[server.name]){
-        const rawSeries = historyRaw[server.name].map(d=>({x:new Date(Number(d.time)), y:Number(d.players)}));
+      if (canvas && historyRaw[server.name]) {
+        const ctx = fixCanvasResolution(canvas, 120, 40);
+        const rawSeries = historyRaw[server.name].map(d => ({
+          x: new Date(Number(d.time)),
+          y: Number(d.players)
+        }));
         const colors = getSparklineColors();
-        sparklineCharts.push(new Chart(canvas.getContext("2d"), {
-          type:"line",
-          data:{ datasets:[{ label:"Online", data:rawSeries, borderColor:colors.border, backgroundColor:colors.background, pointRadius:1, pointHitRadius:10, tension:0.3, borderWidth:1, fill:true }] },
-          options:{ responsive:false, interaction:{mode:'nearest', intersect:false}, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} players online`}}}, scales:{x:{type:'time', time:{unit:'hour'}, display:false}, y:{beginAtZero:true, display:false}} }
+        sparklineCharts.push(new Chart(ctx, {
+          type: "line",
+          data: {
+            datasets: [{
+              label: "Online",
+              data: rawSeries,
+              borderColor: colors.border,
+              backgroundColor: colors.background,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              tension: 0.3,
+              borderWidth: 1,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: false,
+            interaction: { mode: 'nearest', intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: ctx => `${ctx.parsed.y} players online`
+                }
+              }
+            },
+            scales: {
+              x: { type: 'time', time: { unit: 'hour' }, display: false },
+              y: { beginAtZero: true, display: false }
+            }
+          }
         }));
       }
     });
     
     const totalCanvas = document.getElementById("total-sparkline");
-    if(totalCanvas && historyRaw["_total"]){
-      const rawSeries = historyRaw["_total"].map(d=>({x:new Date(Number(d.time)), y:Number(d.players)}));
-      const colors = getSparklineColors();
-      totalChart = new Chart(totalCanvas.getContext("2d"), {
-        type:"line",
-        data:{ datasets:[{ data:rawSeries, borderColor:colors.border, backgroundColor:colors.background, pointRadius:1, pointHitRadius:10, tension:0.4, fill:true }] },
-        options:{ responsive:false, interaction:{mode:'nearest', intersect:false}, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} players total`}}}, scales:{x:{type:'time', time:{unit:'hour'}, display:false}, y:{beginAtZero:true, display:false}} }
-      });
+    if (totalCanvas && historyRaw["_total"]) {
+        const ctx = fixCanvasResolution(totalCanvas, 300, 50);
+        const rawSeries = historyRaw["_total"].map(d => ({
+            x: new Date(Number(d.time)),
+            y: Number(d.players)
+        }));
+        const colors = getSparklineColors();
+        totalChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            datasets: [{
+              data: rawSeries,
+              borderColor: colors.border,
+              backgroundColor: colors.background,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              tension: 0.4,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: false,
+            interaction: { mode: 'nearest', intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: ctx => `${ctx.parsed.y} players total`
+                }
+              }
+            },
+            scales: {
+              x: { type: 'time', time: { unit: 'hour' }, display: false },
+              y: { beginAtZero: true, display: false }
+            }
+          }
+        });
     }
 
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
