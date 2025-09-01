@@ -106,31 +106,27 @@ function fixCanvasResolution(canvas, width, height) {
   return canvas.getContext("2d");
 }
 
-// blend of fill ratio + variance
-function computeActivityScore(history, maxPlayers) {
-  if (!history || history.length === 0) return 0;
+function computeActivityScore(history, maxPlayers){
+  if(!history || history.length === 0) return 0;
   const values = history.map(d => Number(d.players));
-  const avg = values.reduce((a, b) => a + b, 0) / values.length;
+  const avg = values.reduce((a,b)=>a+b,0) / values.length;
   const peak = Math.max(...values);
+  const stddev = Math.sqrt(
+    values.reduce((s,v)=>s+Math.pow(v-avg,2),0) / values.length
+  );
+  const denom = Math.max(maxPlayers || peak, 1);
 
-  const denom = (maxPlayers && maxPlayers > 0) ? maxPlayers : peak || 1;
   const fillRatio = avg / denom;
-
-  const mean = avg || 1;
-  const variance = values.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / values.length;
-  const stddev = Math.sqrt(variance);
-  const varianceRatio = stddev / mean;
-
-  const score = 0.6 * fillRatio + 0.4 * varianceRatio;
-  return +score.toFixed(3);
+  const varianceRatio = stddev / (peak || 1);
+  return 0.7 * fillRatio + 0.3 * varianceRatio;
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
   const selector = document.getElementById('theme-selector');
   themes.forEach(t => {
     const opt = document.createElement('option');
-    opt.value = t;
-    opt.textContent = t.charAt(0).toUpperCase() + t.slice(1);
+    opt.value=t;
+    opt.textContent=t.charAt(0).toUpperCase()+t.slice(1);
     selector.appendChild(opt);
   });
 
@@ -157,10 +153,9 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   table = $('#servers-table').DataTable({
     columnDefs: [
-      { targets: '_all', orderable: false },
-      { targets: [5], orderable: true },   // online players sortable
-      { targets: [9], visible: false },    // hide score column
-      { targets: [8], orderData: [9] }     // activity column sorts by hidden score
+      { targets: [0,5,8], orderable: true },
+      { targets: [9], visible: false }, 
+      { targets: [8], orderData: [9] } 
     ]
   });
 
@@ -192,7 +187,10 @@ document.addEventListener("DOMContentLoaded", async function() {
         ? `<span data-bs-toggle="tooltip" title="${playerNames}">${playerCount}</span>`
         : playerCount;
 
-      const score = computeActivityScore(historyRaw[server.name], latestData.max);
+      let score = 0;
+      if(historyRaw[server.name]){
+        score = computeActivityScore(historyRaw[server.name], latestData.max);
+      }
 
       const row = table.row.add([
         server.name,
@@ -203,18 +201,15 @@ document.addEventListener("DOMContentLoaded", async function() {
         playerCell,
         latestData.max??"N/A",
         latestData.version??'<i class="fas fa-question-circle"></i>',
-        `<div data-bs-toggle="tooltip" title="Activity Score: ${score}">
-           <canvas class="sparkline"></canvas>
-         </div>`,
-        score
+        `<canvas class="sparkline"></canvas>`,
+        score.toFixed(4) // hidden sortable score
       ]).draw(false).node();
 
       const canvas = row.querySelector('canvas.sparkline');
       if (canvas && historyRaw[server.name]) {
         const ctx = fixCanvasResolution(canvas, 120, 40);
         const rawSeries = historyRaw[server.name].map(d => ({
-          x: new Date(Number(d.time)),
-          y: Number(d.players)
+          x: new Date(Number(d.time)), y: Number(d.players)
         }));
         const colors = getSparklineColors();
         sparklineCharts.push(new Chart(ctx, {
@@ -254,13 +249,12 @@ document.addEventListener("DOMContentLoaded", async function() {
         }));
       }
     });
-
+    
     const totalCanvas = document.getElementById("total-sparkline");
     if (totalCanvas && historyRaw["_total"]) {
       const ctx = fixCanvasResolution(totalCanvas, 420, 120);
       const rawSeries = historyRaw["_total"].map(d => ({
-        x: new Date(Number(d.time)),
-        y: Number(d.players)
+        x: new Date(Number(d.time)), y: Number(d.players)
       }));
       const colors = getSparklineColors();
       totalChart = new Chart(ctx, {
@@ -295,7 +289,9 @@ document.addEventListener("DOMContentLoaded", async function() {
       });
     }
 
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipTriggerList = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
     tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
 
     $('#servers-table tbody').on('click','.copy-ip',function(){
@@ -310,6 +306,7 @@ document.addEventListener("DOMContentLoaded", async function() {
   }
 });
 </script>
+
 
   
 </head>
