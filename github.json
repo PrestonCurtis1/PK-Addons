@@ -674,5 +674,18 @@
         "max_mc_version": "",
         "min_pk_version": "",
         "max_pk_version": ""
+    },
+    {
+        "name": "Villages",
+        "author": "Cozmyc",
+        "category": "Side plugin / Land management / ProjectKorra support",
+        "last_update": "Sep 1, 2025",
+        "latest_version": "1.3.0",
+        "download_url": "https://github.com/CozmycDev/Villages/releases",
+        "source_url": "https://github.com/CozmycDev/Villages/",
+        "min_mc_version": "",
+        "max_mc_version": "",
+        "min_pk_version": "",
+        "max_pk_version": ""
     }
 ]
