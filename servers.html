@@ -21,7 +21,7 @@
 
 <link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/lux/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/dataTables.bootstrap5.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <style>
@@ -49,6 +49,7 @@ select.theme-select option { color:#000; background:#fff; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js" defer></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
 <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js" defer></script>
+<script src="https://cdn.datatables.net/1.13.3/js/dataTables.bootstrap5.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js" defer></script>
 
@@ -152,8 +153,10 @@ document.addEventListener("DOMContentLoaded", async function() {
   const historyUrl = "https://raw.githubusercontent.com/CozmycDev/PK-Addons/main/data/server_history.json";
 
   table = $('#servers-table').DataTable({
+    order: [[9, 'desc']], // sort by hidden activity score
     columnDefs: [
-      { targets: [0,5,8], orderable: true },
+      { targets: [0,5,8], orderable: true }, // only Name, Online Players, Activity
+      { targets: '_all', orderable: false },
       { targets: [9], visible: false }, 
       { targets: [8], orderData: [9] } 
     ]
@@ -201,7 +204,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         playerCell,
         latestData.max??"N/A",
         latestData.version??'<i class="fas fa-question-circle"></i>',
-        `<canvas class="sparkline"></canvas>`,
+        `<div class="sparkline-container"><canvas class="sparkline"></canvas><div class="activity-score text-muted small">${score.toFixed(2)}</div></div>`,
         score.toFixed(4) // hidden sortable score
       ]).draw(false).node();
 
@@ -229,22 +232,8 @@ document.addEventListener("DOMContentLoaded", async function() {
           },
           options: {
             responsive: false,
-            interaction: { mode: 'nearest', intersect: false },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                bodyFont: { size: 8 },
-                titleFont: { size: 8 },
-                padding: 4,
-                callbacks: {
-                  label: ctx => `${ctx.parsed.y} players online`
-                }
-              }
-            },
-            scales: {
-              x: { type: 'time', time: { unit: 'hour' }, display: false },
-              y: { beginAtZero: true, display: false }
-            }
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: { x: { display: false }, y: { display: false } }
           }
         }));
       }
@@ -272,19 +261,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         },
         options: {
           responsive: false,
-          interaction: { mode: 'nearest', intersect: false },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: ctx => `${ctx.parsed.y} players total`
-              }
-            }
-          },
-          scales: {
-            x: { type: 'time', time: { unit: 'hour' }, display: false },
-            y: { beginAtZero: true, display: false }
-          }
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          scales: { x: { display: false }, y: { display: false } }
         }
       });
     }
@@ -306,8 +284,6 @@ document.addEventListener("DOMContentLoaded", async function() {
   }
 });
 </script>
-
-
   
 </head>
 
