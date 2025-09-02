@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+  
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -99,20 +100,14 @@ select.theme-select option { color:#000; background:#fff; }
 </div>
 
 <div class="text-center mt-4 mb-4">
-  
-
-
 
 <p>
   This site is not owned or operated by ProjectKorra.<br>If you would like to see something added or removed, open a PR or issue on <a href="https://github.com/CozmycDev/PK-Addons">the repo</a>.<br>Legend: <i class="fas fa-question-circle"></i>=Unknown, <i class="fa-solid fa-x"></i>=Dead Link<br>Last Updated: Sep 1, 2025
 </p>
 
-
-
-
 </div>
 
-<!-- JS Dependencies -->
+  
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -143,7 +138,6 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem('pk-dark', enabled ? '1' : '0');
   }
 
-  // Theme selector
   const selector = document.getElementById('theme-selector');
   themes.forEach(t => { const opt = document.createElement('option'); opt.value=t; opt.textContent=t.charAt(0).toUpperCase()+t.slice(1); selector.appendChild(opt); });
 
@@ -162,7 +156,6 @@ document.addEventListener('DOMContentLoaded', function() {
     $('#table').DataTable().draw();
   });
 
-  // Fetch & merge data
   const forumUrl = "https://cozmycdev.github.io/PK-Addons/forum.json";
   const githubUrl = "https://cozmycdev.github.io/PK-Addons/github.json";
 
@@ -181,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   fetchAndMergeData().then(data=>{
     const tableBody = document.getElementById("table-body");
-    const newCutoff = moment("2025-01-04", "YYYY-MM-DD"); // anything after this is new
+    const newCutoff = moment("2025-01-04", "YYYY-MM-DD");
 
     data.forEach(entry=>{
       const normalizedDate = normalizeDate(entry.last_update);
@@ -193,7 +186,6 @@ document.addEventListener('DOMContentLoaded', function() {
             : '<i class="fa-solid fa-x"></i>')
         : '<i class="fas fa-question-circle"></i>';
 
-      // Check if this entry is new
       const isNew = normalizedDate && moment(normalizedDate).isAfter(newCutoff);
       const nameCell = entry.name || '<i class="fas fa-question-circle"></i>';
       const nameWithBadge = isNew
