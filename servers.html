@@ -204,8 +204,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         playerCell,
         latestData.max??"N/A",
         latestData.version??'<i class="fas fa-question-circle"></i>',
-        `<div class="sparkline-container"><canvas class="sparkline"></canvas><div class="activity-score text-muted small">${score.toFixed(2)}</div></div>`,
-        score.toFixed(4) // hidden sortable score
+        `<div class="sparkline-container"><canvas class="sparkline"></canvas><div class="activity-score text-muted small">activity score: ${score.toFixed(2)}</div></div>`,
+        score.toFixed(4)
       ]).draw(false).node();
 
       const canvas = row.querySelector('canvas.sparkline');
@@ -364,7 +364,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 <div class="text-center mt-4 mb-4">
   <p>
-    This site is not owned or operated by ProjectKorra.<br> If you would like to add, remove, or update a server, feel free to open a PR or issue on <a href="https://github.com/CozmycDev/PK-Addons">the repo</a>.<br>Legend: <i class="fas fa-question-circle"></i>=Unknown, <i class="fa-solid fa-x"></i>=Offline/Not Applicable<br>Last Updated: Sep 1, 2025
+    This site is not owned or operated by ProjectKorra.<br> Activity scores are based (70%) on how full a server usually is and (30%) the average player variance over time.<br> The score is only an approximation and does not come with guarantees.<br> If you would like to add, remove, or update a server, feel free to open a PR or issue on <a href="https://github.com/CozmycDev/PK-Addons">the repo</a>.<br>Legend: <i class="fas fa-question-circle"></i>=Unknown, <i class="fa-solid fa-x"></i>=Offline/Not Applicable<br>Last Updated: Sep 2, 2025
   </p>
 </div>
   
