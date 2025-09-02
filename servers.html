@@ -107,16 +107,25 @@ function fixCanvasResolution(canvas, width, height) {
 }
 
 function computeActivityScore(history, maxPlayers, totalPlayersOnline){
-  if(!history || history.length === 0 || totalPlayersOnline === 0) return 0;
+  if(!history || history.length === 0) return 0.0;
+
   const values = history.map(d => Number(d.players));
-  const mean = values.reduce((a,b) => a+b,0) / values.length;
-  const stddev = Math.sqrt(values.reduce((s,v)=>s+Math.pow(v-mean,2),0)/values.length) || 1;
   const latest = values[values.length-1];
+
+  if(values.every(v => v === 0)) return 0.0;
+
+  const mean = values.reduce((a,b)=>a+b,0)/values.length;
+  const stddev = Math.sqrt(values.reduce((s,v)=>s+Math.pow(v-mean,2),0)/values.length) || 1;
+
   let z = (latest - mean) / stddev;
-  z = Math.max(-2, Math.min(2, z));
-  const normalizedZ = (z + 2) / 4;
-  const share = latest / totalPlayersOnline;
-  return 0.6 * share + 0.4 * normalizedZ;
+  const normalizedZ = (Math.max(-2, Math.min(2, z)) + 2) / 4;
+  const share = latest / Math.max(totalPlayersOnline, 1);
+
+  let score = 0.7 * normalizedZ + 0.3 * share;
+
+  if(score < 0.1 && latest > 0) score = 0.1;
+
+  return score;
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
