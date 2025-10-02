@@ -1,15 +1,15 @@
 {
   "MegaCraft": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
-    "players": 7,
+    "players": 8,
     "playernames": [],
     "max": 300,
     "version": "1.8.x, 1.9.x, 1.10.x, 1.11.x, 1.12.x, 1.13.x, 1.14.x, 1.15.x, 1.16.x, 1.17.x, 1.18.x, 1.19.x, 1.20.x, 1.21.x",
     "motd": "The Mega Craft Network  |   Hello there! BENDING     \u2582\u2585\u2582      SURVIVAL     \u2582\u2585\u2582      ARENAS"
   },
   "ElementalMC": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
@@ -18,7 +18,7 @@
     "motd": "[1.21+] [BEDROCK] ElementalMC [.gg/elementalmc]                          \u0299\u1d00s\u1d07\u1d05\u1d0d\u1d04"
   },
   "SnickerzCraft": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
@@ -27,16 +27,16 @@
     "motd": "1 3 1 1 SnickerzCraft 1 1 2 1 1 1 Multiverse of Madness 1 1"
   },
   "Avatarverse": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
-    "players": 3,
+    "players": 4,
     "playernames": [],
     "max": 200,
     "version": "1.7.2-1.21.7",
     "motd": "      \u2742   The Avatarverse welcomes you...  \u2742     \u6c34     RPG    \u571f    Bending    \u706b    Nations    \u6c14 "
   },
   "Four Nations": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
@@ -45,25 +45,25 @@
     "motd": "FourNationsMC Immersive Avatar World, Builds, Bending, Custom Mobs and Items! -- 1.21.1"
   },
   "EtherealCraft": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
-    "players": 1,
+    "players": 2,
     "playernames": [],
     "max": 100,
     "version": "1.7.2-1.21.8",
     "motd": "     ----[--- EtherealCraft [1.21.4] ---]----                     \u262f Master the Four Elements \u262f"
   },
   "BendersMC": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
-    "players": 300,
+    "players": 296,
     "playernames": [],
     "max": 1250,
     "version": "1.7.2-1.21.8",
     "motd": "    FOUR ELEMENTS MINECRAFT SERVER           \u029c\u1d1b\u1d1b\u1d18\ua731://\u1d05\u026a\ua731\u1d04\u1d0f\u0280\u1d05.\u0262\u0262/\u0299\u1d07\u0274\u1d05\u1d07\u0280\ua731\u1d0d\u1d04"
   },
   "CraftLords": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
@@ -72,7 +72,7 @@
     "motd": "        ---------&lt; Craftlords &gt;---------      Vampires &gt;&gt; Werewolves &gt;&gt; Magic &gt;&gt; Slimefun Hover: #- |- #  ------------------------------ #  VERSION &gt;&gt; 1.19 #  ONLINE &gt;&gt; 0/100 #  WEBSITE &gt;&gt; www.craftlords.com #  DISCORD &gt;&gt; www.discord.gg/DjaQNFA   #  ------------------------------"
   },
   "StarWorksMC": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
@@ -81,52 +81,52 @@
     "motd": "Cool server"
   },
   "SkyMata.Games": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
-    "players": 15,
+    "players": 13,
     "playernames": [],
     "max": 1000,
     "version": "1.7.2-1.21.8",
     "motd": "               SkyMata | [1.18 - 1.21.8]      dwdasdso SPOOKY UPDATE dwdasdso"
   },
   "DoodCraft": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
     "max": 100,
     "version": "1.7.2-1.21.8",
-    "motd": "Q \ud83d\udf01 DoodCraft \ud83d\udf03 W Bending Villages SMP \u00b7 \ud83d\udf02 Claim \u2022 \ud83d\udf04 Bend \u2022 \ud83d\udf03 Survive"
+    "motd": "  \ud83d\udf01 DoodCraft \ud83d\udf03  Bending Villages SMP \u00b7 \ud83d\udf02 Claim . \ud83d\udf04 Bend . \ud83d\udf03 Survive"
   },
   "United Elements SMP": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
     "max": 999,
     "version": "1.20.4",
-    "motd": "United Elements SMP Will you go penguin sledding with me?"
+    "motd": "United Elements SMP It&#039;s the quenchiest!"
   },
   "The Last Block Bender": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
-    "players": 3,
+    "players": 2,
     "playernames": [],
     "max": 200,
     "version": "1.19.4",
     "motd": "               THE LAST BLOCKBENDER          \u272f Birthday Fair \u272f Bending \u272f Survival \u272f Creative \u272f"
   },
   "BendingMC": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
-    "players": 8,
+    "players": 6,
     "playernames": [],
     "max": 500,
     "version": "1.21.1",
     "motd": "BendingMC - [ 1.20+] BENDING \u25aa TOWNY \u25aa ARENA"
   },
   "Bending Haven": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
@@ -135,55 +135,61 @@
     "motd": "---------\u00bb :::: Bending Haven :::: \u00ab---------               Welcome player! : [1.8-1.21.4]"
   },
   "OtherlandMc": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
-    "players": 4,
+    "players": 5,
     "playernames": [],
     "max": 50,
     "version": "1.7.2-1.21.8",
     "motd": "        OtherLandMc V2.0 [JE&amp;BE]          ^ Dimensions Update ^"
   },
   "Bendcraft": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 1,
     "playernames": [],
     "max": 69,
     "version": "1.21.5",
-    "motd": "Bendcraft | 1.21.8 | EU Friendly! &gt; v i b e s"
+    "motd": "Bendcraft | 1.21.8 | Get the frick  out of my room im playing minecraft"
   },
   "ElementCraft": {
-    "time": 1759419149186,
-    "online": false,
-    "players": 0,
-    "playernames": []
+    "time": 1759420155977,
+    "online": true,
+    "players": 108,
+    "playernames": [],
+    "max": 1200,
+    "version": "NullCordX ",
+    "motd": "    \u26a1 \uff25\uff2c\uff25\uff2d\uff25\uff2e\uff34\uff23\uff32\uff21\uff26\uff34 (\uff11.\uff11\uff16.\uff15 - \uff11.\uff12\uff11.\uff14) \u26a1    \u21aa \u0412\u042b\u0411\u0415\u0420\u0418 \u0421\u0412\u041e\u042e \u0421\u0422\u0418\u0425\u0418\u042e | \u0412\u042b\u0416\u0418\u0412\u0410\u041d\u0418\u0415 \u0421 \u041c\u0410\u0413\u0418\u0415\u0419 \u21a9"
   },
   "Avatach": {
-    "time": 1759419149186,
-    "online": false,
-    "players": 0,
-    "playernames": []
+    "time": 1759420155977,
+    "online": true,
+    "players": 5,
+    "playernames": [],
+    "max": 100,
+    "version": "1.7.2-1.20.4",
+    "motd": "\u0410\u0432\u0430\u0442\u0430\u0447: \u041c\u0430\u0433\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0441\u0435\u0440\u0432\u0435\u0440 [1.12.2 - 1.20.4] \u0412\u043e\u0434\u0430 - \u0417\u0435\u043c\u043b\u044f - \u041e\u0433\u043e\u043d\u044c - \u0412\u043e\u0437\u0434\u0443\u0445"
   },
   "\u0410\u0432\u0430\u0442\u0430\u0440\u0443\u0441": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
-    "players": 41,
+    "players": 33,
     "playernames": [],
     "max": 2025,
     "version": "\u041d\u0430\u0448 \u0441\u0430\u0439\u0442: shop.avatarus.fun",
     "motd": "             \u0410\u0432\u0430\u0442\u0430\u0440\u0443\u0441 - \u0441\u0435\u0440\u0432\u0435\u0440 \u0441 \u043c\u0430\u0433\u0438\u0435\u0439!            \u0412\u043e\u0434\u0430 \u2726 \u0417\u0435\u043c\u043b\u044f \u2726 \u041e\u0433\u043e\u043d\u044c \u2726 \u0412\u043e\u0437\u0434\u0443\u0445"
   },
   "GenjiWorld": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
-    "players": 41,
+    "players": 33,
     "playernames": [],
     "max": 2025,
     "version": "\u041d\u0430\u0448 \u0441\u0430\u0439\u0442: shop.avatarus.fun",
     "motd": "             \u0410\u0432\u0430\u0442\u0430\u0440\u0443\u0441 - \u0441\u0435\u0440\u0432\u0435\u0440 \u0441 \u043c\u0430\u0433\u0438\u0435\u0439!            \u0412\u043e\u0434\u0430 \u2726 \u0417\u0435\u043c\u043b\u044f \u2726 \u041e\u0433\u043e\u043d\u044c \u2726 \u0412\u043e\u0437\u0434\u0443\u0445"
   },
   "Padbenders": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
@@ -192,7 +198,7 @@
     "motd": "         - PADBENDERS [1.8 - 1.21.5]                                 FIRE EARTH WATER AIR|"
   },
   "Avatar IL": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
@@ -201,7 +207,7 @@
     "motd": "AvatarIL            \u05e9\u05e8\u05ea \u05d4\u05d0\u05d5\u05d5\u05d8\u05d0\u05e8 \u05d4\u05d8\u05d5\u05d1 \u05d1\u05d9\u05e9\u05e8\u05d0\u05dc"
   },
   "Avatar Stories": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
@@ -210,13 +216,13 @@
     "motd": "JimiHendrix2068!"
   },
   "Elementrix": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": false,
     "players": 0,
     "playernames": []
   },
   "KorraMC": {
-    "time": 1759419149186,
+    "time": 1759420155977,
     "online": true,
     "players": 0,
     "playernames": [],
@@ -225,7 +231,7 @@
     "motd": "&lt;---KorraMC---&gt; FOUR ELEMENTS MINECRAFT SERVER [1.19+] [discord.gg/dVnEAUqmgS]"
   },
   "_total": {
-    "time": 1759419149186,
-    "players": 424
+    "time": 1759420155977,
+    "players": 516
   }
 }
