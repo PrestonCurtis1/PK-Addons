@@ -8,6 +8,14 @@
         "languages": "en"
     },
     {
+        "name": "AvatarMC",     
+        "ip": "avatarmc.pl",
+        "tags": "",
+        "bedrock_port": "",
+        "discord_invite": "",
+        "languages": "pl"
+    },
+    {
         "name": "ElementalMC",     
         "ip": "play.elementalmc.live",
         "tags": "Factions / Towny / Survival / RPG",
