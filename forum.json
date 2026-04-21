@@ -3016,19 +3016,6 @@
         "max_pk_version": ""
     },
     {
-        "name": "MetalDetector",
-        "author": "Unprankable",
-        "category": "metalbending",
-        "last_update": "Apr 10, 2025",
-        "latest_version": "1.2",
-        "download_url": "https://projectkorra.com/forum/resources/metaldetector-1-2.505/download",
-        "source_url": "https://projectkorra.com/forum/resources/metaldetector-1-2.505",
-        "min_mc_version": "",
-        "max_mc_version": "",
-        "min_pk_version": "1.11.2",
-        "max_pk_version": ""
-    },
-    {
         "name": "Soar",
         "author": "Nysseus",
         "category": "airbending",
